@@ -1,6 +1,8 @@
-import React, { ErrorBoundary } from 'react'
-import { combineReducers, createStore, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
+import React, { ErrorBoundary } from 'react';
+import SplashScreen from 'react-native-splash-screen';
+
+import { combineReducers, createStore, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
 import {
   reduxifyNavigator,
   createReactNavigationReduxMiddleware,
@@ -37,6 +39,12 @@ const store = createStore(
 
 // provide store and export app root component
 export default class Root extends React.Component {
+
+  componentDidMount() {
+      // do stuff while splash screen is shown
+        // After having done stuff (such as async tasks) hide the splash screen
+        SplashScreen.hide();
+    }
 
   render () {
     return (
