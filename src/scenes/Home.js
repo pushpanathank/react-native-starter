@@ -42,7 +42,7 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <View style={styles.description}>
-          <Text styles={styles.descriptionText}>Tap the back button on your android phone.</Text>
+          <Text style={styles.descriptionText}>Tap the back button on your android phone.</Text>
         </View>
         <View style={styles.actions}>
           <Button style={styles.btn} title='Go To Counter Page' onPress={() => {navigation.navigate('Counter')}}>Go To Counter Page</Button>
@@ -74,7 +74,8 @@ const styles = StyleSheet.create({
   },
   descriptionText: {
     color: '#444',
-    fontSize: 24
+    fontSize: 24,
+    fontFamily: 'Quicksand-Bold'
   },
   actions: {
     marginTop: 10,
