@@ -1,4 +1,5 @@
 {
   "name": "RNStarter",
-  "displayName": "RN Starter"
+  "displayName": "RN Starter",
+  "senderID": "YOUR-GCM-ID"
 }
