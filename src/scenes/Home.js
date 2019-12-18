@@ -21,8 +21,8 @@ class Home extends React.Component {
   }
 
   onRegister(token) {
-    Alert.alert("Registered !", JSON.stringify(token));
     console.log(token);
+    Alert.alert("Registered !", JSON.stringify(token));
     this.setState({ registerToken: token.token, gcmRegistered: true });
   }
 

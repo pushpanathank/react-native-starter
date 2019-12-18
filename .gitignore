@@ -46,6 +46,7 @@ typings/
 # OSX
 #
 .DS_Store
+google-services.json
 
 # Xcode
 #

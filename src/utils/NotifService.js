@@ -9,6 +9,7 @@ export default class NotifService {
   }
 
   configure(onRegister, onNotification, gcm = "") {
+    console.log("gcm", gcm);
     PushNotification.configure({
       // (optional) Called when Token is generated (iOS and Android)
       onRegister: onRegister, //this._onRegister.bind(this),
