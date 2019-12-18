@@ -4,7 +4,7 @@ import SplashScreen from 'react-native-splash-screen';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import {
-  reduxifyNavigator,
+  createReduxContainer,
   createReactNavigationReduxMiddleware,
   createNavigationReducer,
 } from 'react-navigation-redux-helpers'
@@ -22,14 +22,14 @@ const rootReducers = combineReducers({
 })
 
 // navigation redux middleware
-// Note: createReactNavigationReduxMiddleware must be run before reduxifyNavigator
+// Note: createReactNavigationReduxMiddleware must be run before createReduxContainer
 const middleware = createReactNavigationReduxMiddleware(
-  'root',
+  navStateSelector => 'root',
   state => state.nav,
 )
 
 // reduxify navigator
-export const App = reduxifyNavigator(AppNavigator, 'root')
+export const App = createReduxContainer(AppNavigator, 'root')
 
 // create store
 const store = createStore(

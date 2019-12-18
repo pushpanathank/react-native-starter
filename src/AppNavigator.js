@@ -1,4 +1,4 @@
-import { createStackNavigator } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import Home from './scenes/Home'
 import Homenew from './scenes/Homenew'
 import Counter from './scenes/Counter'
