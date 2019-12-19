@@ -48,6 +48,10 @@ class Home extends React.Component {
           <Button style={styles.btn} title='Go To Counter Page' onPress={() => {navigation.navigate('Counter')}}>Go To Counter Page</Button>
         </View>
 
+        <View style={styles.actions}>
+          <Button style={styles.btn} title='Go To Map Page' onPress={() => {navigation.navigate('Map')}}>Go To Map Page</Button>
+        </View>
+
 
         <TextInput style={styles.textField} value={this.state.registerToken} placeholder="Register token" />
 
