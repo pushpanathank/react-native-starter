@@ -97,6 +97,18 @@ class Map extends React.Component {
     console.log('[motionchange] -', event.isMoving, event.location);
   }
 
+  async getCurrentLocation(){
+    let location = await BackgroundGeolocation.getCurrentPosition({
+      timeout: 30,          // 30 second timeout to fetch location
+      maximumAge: 5000,     // Accept the last-known-location if not older than 5000 ms.
+      desiredAccuracy: 10,  // Try to fetch a location with an accuracy of `10` meters.
+      samples: 3,           // How many location samples to attempt.
+      extras: {             // Custom meta-data.
+        "route_id": 123
+      }
+    });
+      console.log("location", location);
+  }
 
   render () {
 
@@ -116,6 +128,10 @@ class Map extends React.Component {
            }}
          >
          </MapView>
+         <View style={styles.bottomtab}>
+         <Button style={styles.btn} title='Loc' onPress={() => {this.getCurrentLocation()}}>Loc</Button>
+         <Button style={styles.btn} title='Start' onPress={() => {navigation.navigate('Counter')}}>Start</Button>
+         </View>
        </View>
     )
     }
@@ -124,7 +140,7 @@ class Map extends React.Component {
 const styles = StyleSheet.create({
   container: {
    ...StyleSheet.absoluteFillObject,
-   height: height,
+   height: height-100,
    width: width,
    justifyContent: 'flex-end',
    alignItems: 'center',
@@ -134,6 +150,19 @@ const styles = StyleSheet.create({
    ...StyleSheet.absoluteFillObject,
    backgroundColor: '#ffffff'
  },
+ bottomtab:{
+  position: 'absolute',
+  bottom:0,
+  width: '100%',
+  height: 50,
+  backgroundColor: '#fff'
+ },
+ btn:{
+  color: '#fff',
+  width:'50%',
+  flex:1,
+  marginRight: 3
+ }
 })
 
 export default connect()(Map)
