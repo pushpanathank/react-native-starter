@@ -1,13 +1,39 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, Alert, Dimensions } from 'react-native';
+import { View, StyleSheet, TextInput, Alert } from 'react-native';
 import { connect } from 'react-redux';
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import BackgroundGeolocation from "react-native-background-geolocation";
-import mapStyle from '../../config/mapStyle.json';
+import BackgroundGeolocation, {
+  State,
+  Config,
+  Location,
+  LocationError,
+  Geofence,
+  HttpEvent,
+  MotionActivityEvent,
+  ProviderChangeEvent,
+  MotionChangeEvent,
+  GeofenceEvent,
+  GeofencesChangeEvent,
+  HeartbeatEvent,
+  ConnectivityChangeEvent,
+  DeviceSettings, DeviceSettingsRequest,
+  Notification,
+  DeviceInfo,
+  Authorization, AuthorizationEvent,
+  TransistorAuthorizationToken
+} from "react-native-background-geolocation";
+import BackgroundFetch from "react-native-background-fetch";
 
-const { width, height } = Dimensions.get('window');
+import { Button, Block, Text } from '../../components/';
+import { MapStyle, BgGeoConfig } from '../../config/';
+import { Theme } from '../../constants/';
+import { Device } from '../../utils/';
 
+
+const STORAGE_KEY:string = "@pushapp:";
 
 class Map extends React.Component {
 
@@ -18,62 +44,78 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      senderId: 0
-    };
+      enabled: false,
+      bgGeo: {didLaunchInBackground: false, enabled: false, schedulerEnabled: false, trackingMode: 1, odometer: 0},
+    }
   }
 
-  componentWillMount() {
-    ////
-    // 1.  Wire up event-listeners
+  componentDidMount() {
+    // Configure BackgroundGeolocation
+    this.configureBackgroundGeolocation();
+
+    // [Optional] Configure BackgroundFetch
+    // this.configureBackgroundFetch();
+  }
+
+  async configureBackgroundGeolocation() {
+    let orgname = 'push';
+    let username = 'push';
+    let id = 1;
+
+    // Step 1:  Listen to events:
+    BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onLocationError.bind(this));
+    BackgroundGeolocation.onMotionChange(this.onMotionChange.bind(this));
+    BackgroundGeolocation.onHeartbeat(this.onHeartbeat.bind(this));
+    BackgroundGeolocation.onHttp(this.onHttp.bind(this));
+    BackgroundGeolocation.onGeofence(this.onGeofence.bind(this));
+    BackgroundGeolocation.onSchedule(this.onSchedule.bind(this));
+    BackgroundGeolocation.onActivityChange(this.onActivityChange.bind(this));
+    BackgroundGeolocation.onProviderChange(this.onProviderChange.bind(this));
+    BackgroundGeolocation.onGeofencesChange(this.onGeofencesChange.bind(this));
+    BackgroundGeolocation.onPowerSaveChange(this.onPowerSaveChange.bind(this));
+    BackgroundGeolocation.onConnectivityChange(this.onConnectivityChange.bind(this));
+    BackgroundGeolocation.onEnabledChange(this.onEnabledChange.bind(this));
+    BackgroundGeolocation.onNotificationAction(this.onNotificationAction.bind(this));
+    // Step 2:  #ready:
+    // If you want to override any config options provided by the Settings screen, this is the place to do it, eg:
+    // config.stopTimeout = 5;
     //
-
-    // This handler fires whenever bgGeo receives a location update.
-    BackgroundGeolocation.onLocation(this.onLocation, this.onError);
-
-    // This handler fires when movement states changes (stationary->moving; moving->stationary)
-    BackgroundGeolocation.onMotionChange(this.onMotionChange);
-
-    // This event fires when a change in motion activity is detected
-    BackgroundGeolocation.onActivityChange(this.onActivityChange);
-
-    // This event fires when the user toggles location-services authorization
-    BackgroundGeolocation.onProviderChange(this.onProviderChange);
-
-    ////
-    // 2.  Execute #ready method (required)
-    //
-    BackgroundGeolocation.ready({
-      // Geolocation Config
-      desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-      distanceFilter: 10,
-      // Activity Recognition
-      stopTimeout: 1,
-      // Application config
-      debug: true, // <-- enable this hear sounds for background-geolocation life-cycle.
-      logLevel: BackgroundGeolocation.LOG_LEVEL_VERBOSE,
-      stopOnTerminate: false,   // <-- Allow the background-service to continue tracking when user closes the app.
-      startOnBoot: true,        // <-- Auto start tracking when device is powered-up.
-      // HTTP / SQLite config
-      url: 'http://yourserver.com/locations',
-      batchSync: false,       // <-- [Default: false] Set true to sync locations to server in a single HTTP request.
-      autoSync: true,         // <-- [Default: true] Set true to sync each location to server as it arrives.
-      headers: {              // <-- Optional HTTP headers
-        "X-FOO": "bar"
-      },
-      params: {               // <-- Optional HTTP params
-        "auth_token": "maybe_your_server_authenticates_via_token_YES?"
+    let config = await AsyncStorage.getItem(STORAGE_KEY+"BgGeoConfig");
+    config = config ? JSON.parse(config) : BgGeoConfig;
+    BackgroundGeolocation.ready(config, (state:State) => {
+      console.log('- state: ', state);
+      if (state.schedule && state.schedule.length > 0) {
+        BackgroundGeolocation.startSchedule();
       }
-    }, (state) => {
-      console.log("- BackgroundGeolocation is configured and ready: ", state.enabled);
 
-      if (!state.enabled) {
-        ////
-        // 3. Start tracking!
-        //
-        BackgroundGeolocation.start(function() {
-          console.log("- Start success");
-        });
-      }
+      this.setState({
+        enabled: state.enabled,
+        bgGeo: state
+      });
+    }, (error:string) => {
+      console.warn('BackgroundGeolocation error: ', error)
+    });
+  }
+
+  configureBackgroundFetch() {
+    // [Optional] Configure BackgroundFetch.
+    BackgroundFetch.configure({
+      minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
+      stopOnTerminate: false, // <-- Android-only,
+      startOnBoot: true, // <-- Android-only
+      enableHeadless: true,
+      requiresCharging: false,
+      requiredNetworkType: BackgroundFetch.NETWORK_TYPE_NONE,
+      requiresDeviceIdle: false,
+      requiresBatteryNotLow: false,
+      requiresStorageNotLow: false
+    }, async () => {
+      console.log('- BackgroundFetch start');
+      let location = await BackgroundGeolocation.getCurrentPosition({persist: true, samples:1, extras: {'context': 'background-fetch-position'}});
+      console.log('- BackgroundFetch current position: ', location) // <-- don't see this
+      BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
+    }, (error) => {
+      console.log('[js] RNBackgroundFetch failed to start')
     });
   }
 
@@ -84,8 +126,35 @@ class Map extends React.Component {
   onLocation(location) {
     console.log('[location] -', location);
   }
-  onError(error) {
+  onLocationError(error) {
     console.warn('[location] ERROR -', error);
+  }
+  onHeartbeat(event) {
+    console.log('[onHeartbeat] -', event);
+  }
+  onHttp(event) {
+    console.log('[onHttp] -', event);
+  }
+  onGeofence(event) {
+    console.log('[onGeofence] -', event);
+  }
+  onSchedule(event) {
+    console.log('[onSchedule] -', event);
+  }
+  onGeofencesChange(event) {
+    console.log('[onGeofencesChange] -', event);
+  }
+  onPowerSaveChange(event) {
+    console.log('[onPowerSaveChange] -', event);
+  }
+  onConnectivityChange(event) {
+    console.log('[onConnectivityChange] -', event);
+  }
+  onEnabledChange(event) {
+    console.log('[onEnabledChange] -', event);
+  }
+  onNotificationAction(event) {
+    console.log('[onNotificationAction] -', event);
   }
   onActivityChange(event) {
     console.log('[activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
@@ -97,17 +166,41 @@ class Map extends React.Component {
     console.log('[motionchange] -', event.isMoving, event.location);
   }
 
-  async getCurrentLocation(){
-    let location = await BackgroundGeolocation.getCurrentPosition({
-      timeout: 30,          // 30 second timeout to fetch location
-      maximumAge: 5000,     // Accept the last-known-location if not older than 5000 ms.
-      desiredAccuracy: 10,  // Try to fetch a location with an accuracy of `10` meters.
-      samples: 3,           // How many location samples to attempt.
-      extras: {             // Custom meta-data.
-        "route_id": 123
-      }
+  async onToggleEnabled() {
+    let enabled = !this.state.enabled;
+    console.log("enabled", enabled);
+
+    this.setState({
+      enabled: enabled,
     });
+
+    if (enabled) {
+      BackgroundGeolocation.start((state:State) => {
+        console.log("- Start success");
+      });
+    } else {
+      BackgroundGeolocation.stop();
+      // Clear markers, polyline, geofences, stationary-region
+      /*this.clearMarkers();
+      this.setState({
+        stationaryRadius: 0,
+        stationaryLocation: {
+          timestamp: '',
+          latitude: 0,
+          longitude: 0
+        }
+      });*/
+    }
+  }
+
+  async getCurrentLocation(){
+    let location = await BackgroundGeolocation.getCurrentPosition();
       console.log("location", location);
+  }
+
+  goToSettings(){
+    const { navigation } = this.props;
+    navigation.navigate('MapSettings');
   }
 
   render () {
@@ -119,7 +212,7 @@ class Map extends React.Component {
          <MapView
            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
            style={styles.map}
-           customMapStyle={mapStyle}
+           customMapStyle={MapStyle}
            region={{
              latitude: 13.0827,
              longitude: 80.2707,
@@ -128,10 +221,36 @@ class Map extends React.Component {
            }}
          >
          </MapView>
-         <View style={styles.bottomtab}>
-         <Button style={styles.btn} title='Loc' onPress={() => {this.getCurrentLocation()}}>Loc</Button>
-         <Button style={styles.btn} title='Start' onPress={() => {navigation.navigate('Counter')}}>Start</Button>
-         </View>
+         <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => this.getCurrentLocation()}
+                style={[styles.btn]}
+              >
+                <Text white center> Loc </Text>
+              </Button> 
+            </Block>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => this.onToggleEnabled()}
+                style={[styles.btn]}
+              >
+                <Text white center > { this.state.enabled ? 'Stop' : 'Start' } </Text>
+              </Button>
+            </Block>
+
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => this.goToSettings()}
+                style={[styles.btn]}
+              >
+                <Text white center > Settings </Text>
+              </Button>
+            </Block>
+          </Block>
        </View>
     )
     }
@@ -140,8 +259,8 @@ class Map extends React.Component {
 const styles = StyleSheet.create({
   container: {
    ...StyleSheet.absoluteFillObject,
-   height: height-100,
-   width: width,
+   height: Device.winHeight-100,
+   width: Device.winWidth,
    justifyContent: 'flex-end',
    alignItems: 'center',
    backgroundColor: '#000'
@@ -158,10 +277,7 @@ const styles = StyleSheet.create({
   backgroundColor: '#fff'
  },
  btn:{
-  color: '#fff',
-  width:'50%',
-  flex:1,
-  marginRight: 3
+  marginRight: 5
  }
 })
 

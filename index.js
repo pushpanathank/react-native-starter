@@ -6,7 +6,7 @@ import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 
-import BackgroundGeolocation from "./src/utils/react-native-background-geolocation";
+import BackgroundGeolocation from "react-native-background-geolocation";
 import BackgroundFetch from "react-native-background-fetch";
 
 

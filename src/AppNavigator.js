@@ -5,6 +5,7 @@ import Counter from './scenes/Counter'
 import Counternew from './scenes/Counternew'
 
 import Map from './screens/Map'
+import MapSettings from './screens/MapSettings'
 
 const AppNavigator = createStackNavigator(
   {
@@ -14,6 +15,7 @@ const AppNavigator = createStackNavigator(
     Counternew,
 
     Map,
+    MapSettings,
   },
   {
     initialRouteName: 'Home',

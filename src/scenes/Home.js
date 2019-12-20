@@ -2,8 +2,8 @@ import React from 'react'
 import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native'
 import { connect } from 'react-redux'
 
-import NotifService from '../utils/NotifService';
-import appConfig from '../../app.json';
+import { NotifService } from '../utils/';
+import { AppCons } from '../constants/';
 
 class Home extends React.Component {
 
@@ -14,7 +14,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      senderId: appConfig.senderID
+      // senderId: AppCons.gcmSenderId
     };
 
     this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));
