@@ -71,6 +71,11 @@
 		<string>fa-light-300.ttf</string>
 		<string>fa-regular-400.ttf</string>
 		<string>fa-solid-900.ttf</string>
+		<string>FontAwesomeLight.ttf</string>
+		<string>FontAwesomeBrands.ttf</string>
+		<string>FontAwesomeDuotone.ttf</string>
+		<string>FontAwesomeRegular.ttf</string>
+		<string>FontAwesomeSolid.ttf</string>
 	</array>
 </dict>
 </plist>

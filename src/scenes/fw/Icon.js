@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
-import { SolidIcons, RegularIcons, BrandIcons, DuotoneIcons, parseIconFromClassName } from './FontAwesomeIcons';
+import { SolidIcons, RegularIcons, BrandIcons, LightIcons, parseIconFromClassName } from './FontAwesomeIcons';
 
 class Icon extends Component {
   setNativeProps(nativeProps) {
@@ -14,7 +14,7 @@ class Icon extends Component {
 
     const IconType = type === 'brand' ? BrandIcons :
                      type === 'regular' ? RegularIcons:
-                     type === 'duotone' ? DuotoneIcons
+                     type === 'light' ? LightIcons
                      : SolidIcons
 
     const font = { fontFamily: IconType._fontFamily || '' }
@@ -41,5 +41,5 @@ const styles = StyleSheet.create({
   },
 });
 
-export { SolidIcons, RegularIcons, BrandIcons, DuotoneIcons, parseIconFromClassName };
+export { SolidIcons, RegularIcons, BrandIcons, LightIcons, parseIconFromClassName };
 export default Icon;

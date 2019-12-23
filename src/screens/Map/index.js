@@ -3,7 +3,6 @@ import { View, StyleSheet, TextInput, Alert, AppState } from 'react-native';
 import { connect } from 'react-redux';
 
 import { RNToasty } from 'react-native-toasty';
-import FontAwesome, { DuotoneIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
 import MapView, {Marker, Polyline, Circle, PROVIDER_GOOGLE} from 'react-native-maps';
 import BackgroundGeolocation, {
   State,
@@ -30,6 +29,7 @@ import BackgroundFetch from "react-native-background-fetch";
 import AsyncStorage from '@react-native-community/async-storage';
 
 import { Button, Block, Text } from '../../components/';
+import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
 import { Device } from '../../utils/';
@@ -739,7 +739,7 @@ class Map extends Component<IProps, IState> {
                 onPress={this.onClickGetCurrentPosition.bind(this)}
                 style={[styles.btn]}
               >
-                <Text white center> <FontAwesome icon={RegularIcons.exclamationTriangle} pro={true}/> Loc </Text>
+                <Text white center> <FontAwesome icon={FaLightIcons.location}/></Text>
               </Button> 
             </Block>
             <Block>

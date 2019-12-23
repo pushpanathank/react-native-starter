@@ -31,6 +31,11 @@
 		83BD96F02D1643108E79D170 /* fa-light-300.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */; };
 		EF06B75988DD4EA7A0966592 /* fa-regular-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */; };
 		6A2C9537CAEB4CFF85D253FC /* fa-solid-900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */; };
+		CB38A8D246E84627B6ACF6F7 /* FontAwesomeLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BD1A90C616C046E8909BCDF5 /* FontAwesomeLight.ttf */; };
+		F6FDB4D8D86A4358BAE3EDC5 /* FontAwesomeBrands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB1E981587A84CFC81492949 /* FontAwesomeBrands.ttf */; };
+		215799AEC76E4C289D14A06D /* FontAwesomeDuotone.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 930D92D32FC74773B1D1D0A4 /* FontAwesomeDuotone.ttf */; };
+		B16E478E572C4D85B6BC2A66 /* FontAwesomeRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3CF0C1A3B63A4F47A322AA4A /* FontAwesomeRegular.ttf */; };
+		465B8ED7BE524079B8282A96 /* FontAwesomeSolid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 007BC137E4BF4C3A8932568A /* FontAwesomeSolid.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -82,6 +87,11 @@
 		E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */ = {isa = PBXFileReference; name = "fa-light-300.ttf"; path = "../src/assets/fonts/FontAwesome/fa-light-300.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */ = {isa = PBXFileReference; name = "fa-regular-400.ttf"; path = "../src/assets/fonts/FontAwesome/fa-regular-400.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */ = {isa = PBXFileReference; name = "fa-solid-900.ttf"; path = "../src/assets/fonts/FontAwesome/fa-solid-900.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BD1A90C616C046E8909BCDF5 /* FontAwesomeLight.ttf */ = {isa = PBXFileReference; name = "FontAwesomeLight.ttf"; path = "../src/assets/fonts/FontAwesome/FontAwesomeLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FB1E981587A84CFC81492949 /* FontAwesomeBrands.ttf */ = {isa = PBXFileReference; name = "FontAwesomeBrands.ttf"; path = "../src/assets/fonts/FontAwesome/FontAwesomeBrands.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		930D92D32FC74773B1D1D0A4 /* FontAwesomeDuotone.ttf */ = {isa = PBXFileReference; name = "FontAwesomeDuotone.ttf"; path = "../src/assets/fonts/FontAwesome/FontAwesomeDuotone.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3CF0C1A3B63A4F47A322AA4A /* FontAwesomeRegular.ttf */ = {isa = PBXFileReference; name = "FontAwesomeRegular.ttf"; path = "../src/assets/fonts/FontAwesome/FontAwesomeRegular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		007BC137E4BF4C3A8932568A /* FontAwesomeSolid.ttf */ = {isa = PBXFileReference; name = "FontAwesomeSolid.ttf"; path = "../src/assets/fonts/FontAwesome/FontAwesomeSolid.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -208,6 +218,11 @@
 				E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */,
 				69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */,
 				1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */,
+				BD1A90C616C046E8909BCDF5 /* FontAwesomeLight.ttf */,
+				FB1E981587A84CFC81492949 /* FontAwesomeBrands.ttf */,
+				930D92D32FC74773B1D1D0A4 /* FontAwesomeDuotone.ttf */,
+				3CF0C1A3B63A4F47A322AA4A /* FontAwesomeRegular.ttf */,
+				007BC137E4BF4C3A8932568A /* FontAwesomeSolid.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -365,6 +380,11 @@
 				83BD96F02D1643108E79D170 /* fa-light-300.ttf in Resources */,
 				EF06B75988DD4EA7A0966592 /* fa-regular-400.ttf in Resources */,
 				6A2C9537CAEB4CFF85D253FC /* fa-solid-900.ttf in Resources */,
+				CB38A8D246E84627B6ACF6F7 /* FontAwesomeLight.ttf in Resources */,
+				F6FDB4D8D86A4358BAE3EDC5 /* FontAwesomeBrands.ttf in Resources */,
+				215799AEC76E4C289D14A06D /* FontAwesomeDuotone.ttf in Resources */,
+				B16E478E572C4D85B6BC2A66 /* FontAwesomeRegular.ttf in Resources */,
+				465B8ED7BE524079B8282A96 /* FontAwesomeSolid.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

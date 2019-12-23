@@ -3,15 +3,7 @@ import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, Alert } fr
 import { connect } from 'react-redux';
 
 
-import FontAwesome, {
-  SolidIcons,
-  RegularIcons,
-  BrandIcons,
-  LightIcons,
-  parseIconFromClassName
-} from "react-native-fontawesome";
-
-
+import FontAwesome, { FaLightIcons } from '../components/icons';
 import { NotifService } from '../utils/';
 import { AppCons } from '../constants/';
 
@@ -48,7 +40,6 @@ class Home extends React.Component {
   render () {
 
     const { navigation } = this.props;
-    const parsedIcon = parseIconFromClassName('fab fa-first-order');
 
     return (
       <View style={styles.container}>
@@ -63,16 +54,7 @@ class Home extends React.Component {
           <Button style={styles.btn} title='Go To Map Page' onPress={() => {navigation.navigate('Map')}}>Go To Map Page</Button>
         </View>
 
-        <FontAwesome style={styles.icon} icon={LightIcons.abacus} />
-        <Text>Solid Icon</Text>
-        <FontAwesome style={styles.icon} icon={RegularIcons.smileWink} />
-        <Text>Regular Icon</Text>
-        <FontAwesome style={styles.icon} icon={BrandIcons.github} />
-        <Text>Brand Icon</Text>
-        <FontAwesome style={styles.icon} icon={parsedIcon} />
-        <Text>Parsed Icon from class name:</Text>
-        <Text>'fab fa-first-order'</Text>
-
+        <FontAwesome style={styles.icon} icon={FaLightIcons.snowflakes} type={'light'}/>
 
         <TextInput style={styles.textField} value={this.state.registerToken} placeholder="Register token" />
 
