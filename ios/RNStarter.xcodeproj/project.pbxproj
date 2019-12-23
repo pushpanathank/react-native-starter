@@ -26,6 +26,11 @@
 		E8ADBC0614914218A949B15B /* Quicksand-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D69F599113C4B1D9841024A /* Quicksand-Regular.ttf */; };
 		6F4A3CB7EC494E9BBB3D1781 /* Quicksand-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0543ECA1025442F6893132A5 /* Quicksand-SemiBold.ttf */; };
 		FAA744CDC76A452FABD4C0ED /* Satisfy-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A2E0F1CCABBA4A5CAA1BA11B /* Satisfy-Regular.ttf */; };
+		C48A4DC5808449C88BAC739F /* fa-brands-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 95415191F26C41D5B3A6E095 /* fa-brands-400.ttf */; };
+		619928FE3A3344D49D6BCA12 /* fa-duotone-900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9022C59781CD4336A6CD370A /* fa-duotone-900.ttf */; };
+		83BD96F02D1643108E79D170 /* fa-light-300.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */; };
+		EF06B75988DD4EA7A0966592 /* fa-regular-400.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */; };
+		6A2C9537CAEB4CFF85D253FC /* fa-solid-900.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +77,11 @@
 		4D69F599113C4B1D9841024A /* Quicksand-Regular.ttf */ = {isa = PBXFileReference; name = "Quicksand-Regular.ttf"; path = "../src/assets/fonts/Quicksand/Quicksand-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		0543ECA1025442F6893132A5 /* Quicksand-SemiBold.ttf */ = {isa = PBXFileReference; name = "Quicksand-SemiBold.ttf"; path = "../src/assets/fonts/Quicksand/Quicksand-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A2E0F1CCABBA4A5CAA1BA11B /* Satisfy-Regular.ttf */ = {isa = PBXFileReference; name = "Satisfy-Regular.ttf"; path = "../src/assets/fonts/Satisfy/Satisfy-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		95415191F26C41D5B3A6E095 /* fa-brands-400.ttf */ = {isa = PBXFileReference; name = "fa-brands-400.ttf"; path = "../src/assets/fonts/FontAwesome/fa-brands-400.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9022C59781CD4336A6CD370A /* fa-duotone-900.ttf */ = {isa = PBXFileReference; name = "fa-duotone-900.ttf"; path = "../src/assets/fonts/FontAwesome/fa-duotone-900.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */ = {isa = PBXFileReference; name = "fa-light-300.ttf"; path = "../src/assets/fonts/FontAwesome/fa-light-300.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */ = {isa = PBXFileReference; name = "fa-regular-400.ttf"; path = "../src/assets/fonts/FontAwesome/fa-regular-400.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */ = {isa = PBXFileReference; name = "fa-solid-900.ttf"; path = "../src/assets/fonts/FontAwesome/fa-solid-900.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +203,11 @@
 				4D69F599113C4B1D9841024A /* Quicksand-Regular.ttf */,
 				0543ECA1025442F6893132A5 /* Quicksand-SemiBold.ttf */,
 				A2E0F1CCABBA4A5CAA1BA11B /* Satisfy-Regular.ttf */,
+				95415191F26C41D5B3A6E095 /* fa-brands-400.ttf */,
+				9022C59781CD4336A6CD370A /* fa-duotone-900.ttf */,
+				E972A0C533DA4118A8DE9073 /* fa-light-300.ttf */,
+				69658E3A8C9A49EE88552295 /* fa-regular-400.ttf */,
+				1D6367963E984A9BA50430A5 /* fa-solid-900.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -345,6 +360,11 @@
 				E8ADBC0614914218A949B15B /* Quicksand-Regular.ttf in Resources */,
 				6F4A3CB7EC494E9BBB3D1781 /* Quicksand-SemiBold.ttf in Resources */,
 				FAA744CDC76A452FABD4C0ED /* Satisfy-Regular.ttf in Resources */,
+				C48A4DC5808449C88BAC739F /* fa-brands-400.ttf in Resources */,
+				619928FE3A3344D49D6BCA12 /* fa-duotone-900.ttf in Resources */,
+				83BD96F02D1643108E79D170 /* fa-light-300.ttf in Resources */,
+				EF06B75988DD4EA7A0966592 /* fa-regular-400.ttf in Resources */,
+				6A2C9537CAEB4CFF85D253FC /* fa-solid-900.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

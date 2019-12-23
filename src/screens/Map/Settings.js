@@ -12,24 +12,32 @@ import { Device } from '../../utils/';
 
 
 const STORAGE_KEY:string = "@pushapp:";
+let _BgGeoConfig = {...BgGeoConfig};
 
 class MapSettings extends React.Component {
 
   static navigationOptions = {
-    title: 'MapSettings',
+    title: 'MapSettings new',
   }
 
   constructor(props) {
     super(props);
+    this.getConfig();
     this.state = {
-        desiredAccuracy: "0",
-        distanceFilter: "50",
-        elasticityMultiplier: "5",
-        desiredOdometerAccuracy: "10",
-        locationUpdateInterval: "1000",
-        fastestLocationUpdateInterval: "0",
-        url: AppCons.locationUrl,
+        desiredAccuracy: ''+_BgGeoConfig.desiredAccuracy,
+        distanceFilter: ''+_BgGeoConfig.distanceFilter,
+        elasticityMultiplier: ''+_BgGeoConfig.elasticityMultiplier,
+        desiredOdometerAccuracy: ''+_BgGeoConfig.desiredOdometerAccuracy,
+        locationUpdateInterval: ''+_BgGeoConfig.locationUpdateInterval,
+        fastestLocationUpdateInterval: ''+_BgGeoConfig.fastestLocationUpdateInterval,
+        url: _BgGeoConfig.url,
+        userid: ''+_BgGeoConfig.params.userid,
     }
+  }
+
+  async getConfig(){
+    let config = await AsyncStorage.getItem(STORAGE_KEY+"BgGeoConfig");
+    _BgGeoConfig = config ? JSON.parse(config) : BgGeoConfig;
   }
 
   onInputChange(key,val,type){
@@ -37,16 +45,31 @@ class MapSettings extends React.Component {
     this.setState({
       [key]: val
     });
-    let config = {...BgGeoConfig};
+    let config = _BgGeoConfig;
     switch(type){
       case 1:
-        config[key] = parseInt(val);
+        if(key=='userid'){
+          config['params']['userid'] = parseInt(val);
+        }else{
+          config[key] = parseInt(val);
+        }
       break;
       default:
         config[key] = val;
       break;
     }
     AsyncStorage.setItem(STORAGE_KEY+"BgGeoConfig", JSON.stringify(config));
+    BackgroundGeolocation.ready(config, (state:State) => {
+      console.log('- state: ', state);
+      BackgroundGeolocation.stop();
+      if (state.enabled) {
+        BackgroundGeolocation.start((state:State) => {
+          console.log("- Start success");
+        });
+      }
+    }, (error:string) => {
+      console.warn('BackgroundGeolocation error: ', error)
+    });
   }
 
   render () {
@@ -165,6 +188,26 @@ class MapSettings extends React.Component {
                   returnKeyType={"next"}
                   value={this.state.url}
                   onChangeText={value => {this.onInputChange("url", value, 0);}}
+                />
+            </Block>
+          </Block>
+          <Block row padding={[0,Theme.sizes.indent]}>
+            <Block>
+              <Text h3>User</Text>
+            </Block>
+          </Block>
+         <Block row padding={[0,Theme.sizes.indent]}>
+            <Block>
+              <Text>userid</Text>
+            </Block>
+            <Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.userid}
+                  onChangeText={value => {this.onInputChange("userid", value, 1);}}
                 />
             </Block>
           </Block>

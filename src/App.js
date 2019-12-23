@@ -1,3 +1,7 @@
+/*
+https://github.com/prscX/react-native-toasty
+*/
+
 import React, { ErrorBoundary } from 'react';
 import SplashScreen from 'react-native-splash-screen';
 

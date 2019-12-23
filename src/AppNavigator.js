@@ -5,7 +5,7 @@ import Counter from './scenes/Counter'
 import Counternew from './scenes/Counternew'
 
 import Map from './screens/Map'
-import MapSettings from './screens/MapSettings'
+import MapSettings from './screens/Map/Settings'
 
 const AppNavigator = createStackNavigator(
   {

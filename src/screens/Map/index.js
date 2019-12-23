@@ -1,10 +1,10 @@
-import React from 'react';
-import { View, StyleSheet, TextInput, Alert } from 'react-native';
+import React, {Component} from 'react';
+import { View, StyleSheet, TextInput, Alert, AppState } from 'react-native';
 import { connect } from 'react-redux';
 
-import AsyncStorage from '@react-native-community/async-storage';
-
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { RNToasty } from 'react-native-toasty';
+import FontAwesome, { DuotoneIcons, RegularIcons, BrandIcons } from 'react-native-fontawesome';
+import MapView, {Marker, Polyline, Circle, PROVIDER_GOOGLE} from 'react-native-maps';
 import BackgroundGeolocation, {
   State,
   Config,
@@ -27,15 +27,60 @@ import BackgroundGeolocation, {
 } from "react-native-background-geolocation";
 import BackgroundFetch from "react-native-background-fetch";
 
+import AsyncStorage from '@react-native-community/async-storage';
+
 import { Button, Block, Text } from '../../components/';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
 import { Device } from '../../utils/';
 
-
+const LATITUDE_DELTA = 0.00922;
+const LONGITUDE_DELTA = 0.00421;
 const STORAGE_KEY:string = "@pushapp:";
+const STATIONARY_REGION_FILL_COLOR = "rgba(200,0,0,0.2)"
+const STATIONARY_REGION_STROKE_COLOR = "rgba(200,0,0,0.2)"
+const GEOFENCE_STROKE_COLOR = "rgba(17,183,0,0.5)"
+const GEOFENCE_FILL_COLOR   ="rgba(17,183,0,0.2)"
+const GEOFENCE_STROKE_COLOR_ACTIVATED = "rgba(127,127,127,0.5)";
+const GEOFENCE_FILL_COLOR_ACTIVATED = "rgba(127,127,127, 0.2)";
+const POLYLINE_STROKE_COLOR = "rgba(32,64,255,0.6)";
 
-class Map extends React.Component {
+type IProps = {
+  navigation: any;
+}
+type IState = {
+  appState: any,
+  username?: string;
+  enabled?: boolean;
+  isMoving?: boolean;
+  isMainMenuOpen?: boolean;
+  isSyncing?: boolean;
+  isEmailingLog?: boolean;
+  isDestroyingLocations?: boolean;
+  isPressingOnMap?: boolean;
+  isResettingOdometer?: boolean;
+  mapScrollEnabled?: boolean,
+  showsUserLocation?: boolean,
+  followsUserLocation?: boolean,
+  tracksViewChanges?: boolean,
+  motionActivity: MotionActivityEvent;
+  odometer?: string;
+  centerCoordinate?: any;
+  stationaryLocation?: any;
+  stationaryRadius?: number;
+  markers?: any;
+  stopZones?: any;
+  geofences?: any;
+  geofencesHit?: any;
+  geofencesHitEvents?: any;
+  coordinates?: any,
+  // Application settings
+  settings?: any,
+  // BackgroundGeolocation state
+  bgGeo: State
+}
+
+class Map extends Component<IProps, IState> {
 
   static navigationOptions = {
     title: 'Map',
@@ -44,9 +89,42 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      appState: AppState.currentState,
       enabled: false,
+      isMoving: false,
+      motionActivity: {activity: 'unknown', confidence: 100},
+      odometer: '0.0',
+      username: "Push",
+      // ActionButton state
+      isMainMenuOpen: true,
+      isSyncing: false,
+      isEmailingLog: false,
+      isDestroyingLocations: false,
+      tracksViewChanges: true,
+      // Map state
+      centerCoordinate: {
+        latitude: 0,
+        longitude: 0
+      },
+      isPressingOnMap: false,
+      mapScrollEnabled: false,
+      showsUserLocation: false,
+      followsUserLocation: false,
+      isResettingOdometer: false,
+      stationaryLocation: {timestamp: '',latitude:0,longitude:0},
+      stationaryRadius: 0,
+      markers: [],
+      stopZones: [],
+      geofences: [],
+      geofencesHit: [],
+      geofencesHitEvents: [],
+      coordinates: [],
+      lastMotionChangeLocation:Location,
+      // Application settings
+      settings: {},
+      // BackgroundGeolocation state
       bgGeo: {didLaunchInBackground: false, enabled: false, schedulerEnabled: false, trackingMode: 1, odometer: 0},
-    }
+    };
   }
 
   componentDidMount() {
@@ -123,47 +201,164 @@ class Map extends React.Component {
   componentWillUnmount() {
     BackgroundGeolocation.removeListeners();
   }
-  onLocation(location) {
+  onLocation(location:Location) {
     console.log('[location] -', location);
+    if (!location.sample) {
+      this.addMarker(location);
+      this.setState({
+        odometer: (location.odometer/1000).toFixed(1)
+      });
+    }
+    this.setCenter(location);
   }
-  onLocationError(error) {
-    console.warn('[location] ERROR -', error);
+  onLocationError(errorCode:LocationError) {
+    console.log('[location] ERROR - ', errorCode);
   }
-  onHeartbeat(event) {
-    console.log('[onHeartbeat] -', event);
+  onHeartbeat(params:HeartbeatEvent) {
+    console.log("[heartbeat] - ", params.location);
   }
-  onHttp(event) {
-    console.log('[onHttp] -', event);
+  onHttp(response:HttpEvent) {
+    console.log('[http] - ', JSON.stringify(response));
   }
-  onGeofence(event) {
-    console.log('[onGeofence] -', event);
+  onSchedule(state:State) {
+    console.log("[schedule] - ", state.enabled, state);
+    this.setState({
+      enabled: state.enabled
+    });
   }
-  onSchedule(event) {
-    console.log('[onSchedule] -', event);
+  onGeofencesChange(event:GeofencesChangeEvent) {
+    var on  = event.on;
+    var off = event.off;
+    var geofences  = this.state.geofences || [];
+
+    // Filter out all "off" geofences.
+    geofences = geofences.filter(function(geofence:Geofence) {
+      return off.indexOf(geofence.identifier) < 0;
+    });
+
+    console.log('[geofenceschange] - ', event);
+    // Add new "on" geofences.
+    on.forEach((geofence:Geofence) => {
+      var marker = geofences.find(function(m:Geofence) { return m.identifier === geofence.identifier;});
+      if (marker) { return; }
+      geofences.push(this.createGeofenceMarker(geofence));
+    });
+
+    this.setState({
+      geofences: geofences
+    });
   }
-  onGeofencesChange(event) {
-    console.log('[onGeofencesChange] -', event);
+  onGeofence(event:GeofenceEvent) {
+    console.log('[geofence] - ', event);
+    let location:Location = event.location;
+    let geofences = this.state.geofences || [];
+    var marker = geofences.find((m:any) => {
+      return m.identifier === event.identifier;
+    });
+    if (!marker) { return; }
+
+    marker.fillColor = GEOFENCE_STROKE_COLOR_ACTIVATED;
+    marker.strokeColor = GEOFENCE_STROKE_COLOR_ACTIVATED;
+
+    let coords = location.coords;
+
+    let geofencesHit = this.state.geofencesHit || [];
+    let hit = geofencesHit.find((hit:any) => {
+      return hit.identifier === event.identifier;
+    });
+
+    if (!hit) {
+      hit = {
+        identifier: event.identifier,
+        radius: marker.radius,
+        center: {
+          latitude: marker.center.latitude,
+          longitude: marker.center.longitude
+        },
+        events: []
+      };
+      this.setState({
+        geofencesHit: [...this.state.geofencesHit, hit]
+      });
+    }
+    // Get bearing of location relative to geofence center.
+    let bearing = this.getBearing(marker.center, location.coords);
+    let edgeCoordinate = this.computeOffsetCoordinate(marker.center, marker.radius, bearing);
+    let record = {
+      coordinates: [
+        edgeCoordinate,
+        {latitude: coords.latitude, longitude: coords.longitude},
+      ],
+      action: event.action,
+      key: event.identifier + ":" + event.action + ":" + location.timestamp
+    };
+    this.setState({
+      geofencesHitEvents: [...this.state.geofencesHitEvents, record]
+    });
   }
-  onPowerSaveChange(event) {
-    console.log('[onPowerSaveChange] -', event);
+  onPowerSaveChange(isPowerSaveMode:boolean) {
+    console.log('[powersavechange] - ', isPowerSaveMode);
   }
-  onConnectivityChange(event) {
-    console.log('[onConnectivityChange] -', event);
+  onConnectivityChange(event:ConnectivityChangeEvent) {
+    console.log('[connectivitychange] - ', event);
+    RNToasty.Show({ title: '[connectivitychange] - ' + event.connected });
   }
-  onEnabledChange(event) {
-    console.log('[onEnabledChange] -', event);
+  onEnabledChange(enabled:boolean) {
+    console.log('[enabledchange] - ', enabled);
+    RNToasty.Show({ title: '[enabledchange] - ' + enabled });
   }
-  onNotificationAction(event) {
-    console.log('[onNotificationAction] -', event);
+  onNotificationAction(buttonId:string) {
+    console.log('[notificationaction] - ', buttonId);
+    switch(buttonId) {
+      case 'notificationActionFoo':
+        break;
+      case 'notificationActionBar':
+        break;
+    }
   }
-  onActivityChange(event) {
+  onActivityChange(event:MotionActivityEvent) {
     console.log('[activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
+    this.setState({
+      motionActivity: event
+    });
   }
-  onProviderChange(provider) {
-    console.log('[providerchange] -', provider.enabled, provider.status);
+  onProviderChange(event:ProviderChangeEvent) {
+    console.log('[providerchange] - ', event);
   }
-  onMotionChange(event) {
-    console.log('[motionchange] -', event.isMoving, event.location);
+  onMotionChange(event:MotionChangeEvent) {
+    console.log('[motionchange] - ', event.isMoving, event.location);
+    let location = event.location;
+
+    let state:any = {
+      isMoving: event.isMoving
+    };
+    if (event.isMoving) {
+      if (this.state.lastMotionChangeLocation) {
+        state.stopZones = [...this.state.stopZones, {
+          coordinate: {
+            latitude: this.state.lastMotionChangeLocation.coords.latitude,
+            longitude: this.state.lastMotionChangeLocation.coords.longitude
+          },
+          key: this.state.lastMotionChangeLocation.timestamp
+        }];
+      }
+      state.stationaryRadius = 0,
+      state.stationaryLocation = {
+        timestamp: '',
+        latitude: 0,
+        longitude: 0
+      };
+    } else {
+      let geofenceProximityRadius = this.state.bgGeo.geofenceProximityRadius || 1000;
+      state.stationaryRadius = (this.state.bgGeo.trackingMode == 1) ? 200 : (geofenceProximityRadius/2);
+      state.stationaryLocation = {
+        timestamp: location.timestamp,
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      };
+    }
+    this.setState(state);
+    this.state.lastMotionChangeLocation = location;
   }
 
   async onToggleEnabled() {
@@ -177,11 +372,15 @@ class Map extends React.Component {
     if (enabled) {
       BackgroundGeolocation.start((state:State) => {
         console.log("- Start success");
+        this.setState({
+            showsUserLocation: enabled,
+            followsUserLocation: enabled
+          });
       });
     } else {
       BackgroundGeolocation.stop();
       // Clear markers, polyline, geofences, stationary-region
-      /*this.clearMarkers();
+      this.clearMarkers();
       this.setState({
         stationaryRadius: 0,
         stationaryLocation: {
@@ -189,14 +388,288 @@ class Map extends React.Component {
           latitude: 0,
           longitude: 0
         }
-      });*/
+      });
     }
   }
 
-  async getCurrentLocation(){
-    let location = await BackgroundGeolocation.getCurrentPosition();
-      console.log("location", location);
+  onClickGetCurrentPosition() {
+    // When getCurrentPosition button is pressed, enable followsUserLocation
+    // PanDrag will disable it.
+    this.setState({
+      followsUserLocation: true
+    });
+    RNToasty.Show({ title: 'Getting position...' });
+    BackgroundGeolocation.getCurrentPosition({
+      persist: true,
+      samples: 1,
+      timeout: 30
+    }).then((location:Location) => {
+      console.log('[getCurrentPosition] success: ', location);
+      this.addMarker(location);
+      this.setCenter(location);
+    }).catch((error:LocationError) => {
+      console.warn('[getCurrentPosition] error: ', error);
+    });
   }
+
+  onClickChangePace() {
+    console.log('- onClickChangePace');
+    let isMoving = !this.state.isMoving;
+    this.setState({isMoving: isMoving});
+    BackgroundGeolocation.changePace(isMoving);
+  }
+
+  onPressGeofence() {
+
+  }
+  getMotionActivityIcon() {
+    let activity = (this.state.motionActivity != null) ? this.state.motionActivity.activity : undefined;
+    switch (activity) {
+      case 'unknown':
+        return 'ios-help-circle';
+      case 'still':
+        return 'ios-body';
+      case 'on_foot':
+        return 'ios-walk';
+      case 'walking':
+        return 'ios-walk';
+      case 'running':
+        return 'ios-walk';
+      case 'in_vehicle':
+        return 'ios-car';
+      case 'on_bicycle':
+        return 'ios-bicycle';
+      default:
+        return 'ios-help-cirlce';
+    }
+  }
+
+  renderMarkers() {
+    let rs:any = [];
+    this.state.markers.map((marker:any) => {
+      rs.push((
+        <Marker
+          key={marker.key}
+          tracksViewChanges={this.state.tracksViewChanges}
+          coordinate={marker.coordinate}
+          anchor={{x:0, y:0.1}}
+          title={marker.title}>
+          <View style={[styles.markerIcon]}></View>
+        </Marker>
+      ));
+    });
+    return rs;
+  }
+
+  renderStopZoneMarkers() {
+    return this.state.stopZones.map((stopZone:any) => (
+      <Marker
+        key={stopZone.key}
+        tracksViewChanges={this.state.tracksViewChanges}
+        coordinate={stopZone.coordinate}
+        anchor={{x:0, y:0}}>
+        <View style={[styles.stopZoneMarker]}></View>
+      </Marker>
+    ));
+  }
+
+  renderActiveGeofences() {
+    return this.state.geofences.map((geofence:any) => (
+      <Circle
+        tracksViewChanges={this.state.tracksViewChanges}
+        key={geofence.identifier}
+        radius={geofence.radius}
+        center={geofence.center}
+        strokeWidth={1}
+        strokeColor={geofence.strokeColor}
+        fillColor={geofence.fillColor}
+        onPress={this.onPressGeofence}
+      />
+    ));
+  }
+
+  renderGeofencesHit() {
+    let rs = [];
+    return this.state.geofencesHit.map((hit:any) => {
+      return (
+        <Circle
+          tracksViewChanges={this.state.tracksViewChanges}
+          key={"hit:" + hit.identifier}
+          radius={hit.radius+1}
+          center={hit.center}
+          strokeWidth={1}
+          strokeColor={COLORS.black}>
+        </Circle>
+      );
+    });
+  }
+
+  renderGeofencesHitEvents() {
+    return this.state.geofencesHitEvents.map((event:any) => {
+      let isEnter = (event.action === 'ENTER');
+      let color = undefined;
+      switch(event.action) {
+        case 'ENTER':
+          color = COLORS.green;
+          break;
+        case 'EXIT':
+          color = COLORS.red;
+          break;
+        case 'DWELL':
+          color = COLORS.gold;
+          break;
+      }
+      let markerStyle = {
+        backgroundColor: color
+      };
+      return (
+        <View key={event.key}>
+          <Polyline
+            tracksViewChanges={this.state.tracksViewChanges}
+            key="polyline"
+            coordinates={event.coordinates}
+            geodesic={true}
+            strokeColor={COLORS.black}
+            strokeWidth={1}
+            zIndex={1}
+            lineCap="square" />
+          <Marker
+            tracksViewChanges={this.state.tracksViewChanges}
+            key="edge_marker"
+            coordinate={event.coordinates[0]}
+            anchor={{x:0, y:0.1}}>
+            <View style={[styles.geofenceHitMarker, markerStyle]}></View>
+          </Marker>
+          <Marker
+            tracksViewChanges={this.state.tracksViewChanges}
+            key="location_marker"
+            coordinate={event.coordinates[1]}
+            anchor={{x:0, y:0.1}}>
+            <View style={styles.markerIcon}></View>
+          </Marker>
+        </View>
+      );
+    });
+  }
+
+  setCenter(location:Location) {
+    if (!this.refs.map) { return; }
+    if (!this.state.followsUserLocation) { return; }
+
+    this.refs.map.animateToRegion({
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA
+    });
+  }
+
+  addMarker(location:Location) {
+    console.log("addMarker", location);
+    let marker = {
+      key: location.uuid,
+      title: location.timestamp,
+      heading: location.coords.heading,
+      coordinate: {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      }
+    };
+
+    this.setState({
+      markers: [...this.state.markers, marker],
+      coordinates: [...this.state.coordinates, {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      }]
+    });
+  }
+
+  createGeofenceMarker(geofence:Geofence) {
+    return {
+      radius: geofence.radius,
+      center: {
+        latitude: geofence.latitude,
+        longitude: geofence.longitude
+      },
+      identifier: geofence.identifier,
+      strokeColor:GEOFENCE_STROKE_COLOR,
+      fillColor: GEOFENCE_FILL_COLOR
+    }
+  }
+
+  onMapPanDrag() {
+    this.setState({
+      followsUserLocation: false,
+      mapScrollEnabled: true
+    });
+  }
+
+  onLongPress(params:any) {
+    console.log("onLongPress");
+    var coordinate = params.nativeEvent.coordinate;
+    this.props.navigation.navigate('Geofence', {
+      coordinate: coordinate
+    });
+  }
+
+  clearMarkers() {
+    this.setState({
+      coordinates: [],
+      markers: [],
+      stopZones: [],
+      geofences: [],
+      geofencesHit: [],
+      geofencesHitEvents: []
+    });
+  }
+
+  toRad(n) {
+    return n * (Math.PI / 180);
+  }
+  toDeg(n) {
+    return n * (180 / Math.PI);
+  }
+
+  getBearing(start:any, end:any){
+    let startLat = this.toRad(start.latitude);
+    let startLong = this.toRad(start.longitude);
+    let endLat = this.toRad(end.latitude);
+    let endLong = this.toRad(end.longitude);
+
+    let dLong = endLong - startLong;
+
+    let dPhi = Math.log(Math.tan(endLat/2.0+Math.PI/4.0)/Math.tan(startLat/2.0+Math.PI/4.0));
+    if (Math.abs(dLong) > Math.PI){
+      if (dLong > 0.0)
+         dLong = -(2.0 * Math.PI - dLong);
+      else
+         dLong = (2.0 * Math.PI + dLong);
+    }
+    return (this.toDeg(Math.atan2(dLong, dPhi)) + 360.0) % 360.0;
+  }
+
+  computeOffsetCoordinate(coordinate:any, distance:number, heading:number) {
+    distance = distance / (6371*1000);
+    heading = this.toRad(heading);
+
+    var lat1 = this.toRad(coordinate.latitude), lon1 = this.toRad(coordinate.longitude);
+    var lat2 = Math.asin(Math.sin(lat1) * Math.cos(distance) +
+                        Math.cos(lat1) * Math.sin(distance) * Math.cos(heading));
+
+    var lon2 = lon1 + Math.atan2(Math.sin(heading) * Math.sin(distance) *
+                                Math.cos(lat1),
+                                Math.cos(distance) - Math.sin(lat1) *
+                                Math.sin(lat2));
+
+    if (isNaN(lat2) || isNaN(lon2)) return null;
+
+    return {
+      latitude: this.toDeg(lat2),
+      longitude: this.toDeg(lon2)
+    };
+  }
+
 
   goToSettings(){
     const { navigation } = this.props;
@@ -209,7 +682,45 @@ class Map extends React.Component {
 
     return (
       <View style={styles.container}>
-         <MapView
+        <MapView
+          ref="map"
+          provider={PROVIDER_GOOGLE}
+          style={styles.map}
+          customMapStyle={MapStyle}
+          showsUserLocation={this.state.showsUserLocation}
+          followsUserLocation={false}
+          onLongPress={this.onLongPress.bind(this)}
+          onPanDrag={this.onMapPanDrag.bind(this)}
+          scrollEnabled={this.state.mapScrollEnabled}
+          showsMyLocationButton={false}
+          showsPointsOfInterest={false}
+          showsScale={false}
+          showsTraffic={false}
+          toolbarEnabled={false}>
+          <Circle
+            key={this.state.stationaryLocation.timestamp}
+            radius={this.state.stationaryRadius||200}
+            fillColor={STATIONARY_REGION_FILL_COLOR}
+            strokeColor={STATIONARY_REGION_STROKE_COLOR}
+            strokeWidth={1}
+            center={{latitude: this.state.stationaryLocation.latitude, longitude: this.state.stationaryLocation.longitude}}
+          />
+          <Polyline
+            tracksViewChanges={this.state.tracksViewChanges}
+            key="polyline"
+            coordinates={ this.state.coordinates }
+            geodesic={true}
+            strokeColor='rgba(0,179,253, 0.6)'
+            strokeWidth={6}
+            zIndex={0}
+          />
+          {this.renderMarkers()}
+          {this.renderStopZoneMarkers()}
+          {this.renderActiveGeofences()}
+          {this.renderGeofencesHit()}
+          {this.renderGeofencesHitEvents()}
+        </MapView>
+         {/* <MapView
            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
            style={styles.map}
            customMapStyle={MapStyle}
@@ -219,16 +730,16 @@ class Map extends React.Component {
              latitudeDelta: 0.05,
              longitudeDelta: 0.05,
            }}
-         >
-         </MapView>
+         > 
+         </MapView>*/}
          <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
             <Block>
               <Button ripple
                 color="secondary"
-                onPress={() => this.getCurrentLocation()}
+                onPress={this.onClickGetCurrentPosition.bind(this)}
                 style={[styles.btn]}
               >
-                <Text white center> Loc </Text>
+                <Text white center> <FontAwesome icon={RegularIcons.exclamationTriangle} pro={true}/> Loc </Text>
               </Button> 
             </Block>
             <Block>
@@ -278,7 +789,34 @@ const styles = StyleSheet.create({
  },
  btn:{
   marginRight: 5
- }
-})
+ },
+ stopZoneMarker: {
+    borderWidth:1,
+    borderColor: 'red',
+    backgroundColor: "rgba(200,0,0,0.2)",
+    opacity: 0.2,
+    borderRadius: 15,
+    zIndex: 0,
+    width: 30,
+    height: 30
+  },
+  geofenceHitMarker: {
+    borderWidth: 1,
+    borderColor:'black',
+    borderRadius: 6,
+    zIndex: 10,
+    width: 12,
+    height:12
+  },
+  markerIcon: {
+    borderWidth:1,
+    borderColor:'#000000',
+    // backgroundColor: COLORS.polyline_color,
+    backgroundColor: 'rgba(0,179,253, 0.6)',
+    width: 10,
+    height: 10,
+    borderRadius: 5
+  },
+});
 
 export default connect()(Map)

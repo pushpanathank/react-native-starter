@@ -66,6 +66,11 @@
 		<string>Quicksand-Regular.ttf</string>
 		<string>Quicksand-SemiBold.ttf</string>
 		<string>Satisfy-Regular.ttf</string>
+		<string>fa-brands-400.ttf</string>
+		<string>fa-duotone-900.ttf</string>
+		<string>fa-light-300.ttf</string>
+		<string>fa-regular-400.ttf</string>
+		<string>fa-solid-900.ttf</string>
 	</array>
 </dict>
 </plist>

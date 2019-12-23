@@ -1,7 +1,7 @@
 import { Platform, StatusBar } from 'react-native';
 import { Scaling } from '../utils/';
 
-const baseSize = 16;
+const baseSize = 14;
 const indent = Scaling.moderateScale(baseSize);
 
 const colors = {
@@ -29,21 +29,20 @@ const colors = {
 const sizes = {
   // global sizes
   base: baseSize,
-  font: 14,
   radius: 0,
-  padding: 25,
+  padding: Scaling.moderateScale(baseSize,7.5),
 
   // font sizes
-  h1: 36,
-  h2: 31,
-  h3: 28,
-  h4: 24,
-  h5: 20,
-  title: 18,
-  header: 16,
-  body: 14,
-  caption: 12,
-  small: 10,
+  h1: Scaling.moderateScale(baseSize,16.5),
+  h2: Scaling.moderateScale(baseSize,13.5),
+  h3: Scaling.moderateScale(baseSize,10.5),
+  h4: Scaling.moderateScale(baseSize,7.5),
+  h5: Scaling.moderateScale(baseSize,4.5),
+  title: Scaling.moderateScale(baseSize,3),
+  header: Scaling.moderateScale(baseSize,1.5),
+  body: Scaling.moderateScale(baseSize,0),
+  caption: Scaling.moderateScale(baseSize,-1.5),
+  small: Scaling.moderateScale(baseSize,-3.0),
 
   // General
   indent:indent,
