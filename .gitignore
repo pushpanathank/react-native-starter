@@ -47,6 +47,7 @@ typings/
 #
 .DS_Store
 google-services.json
+src/constants/AppCons.js
 
 # Xcode
 #
