@@ -165,7 +165,7 @@ class Map extends Component<IProps, IState> {
       if (state.schedule && state.schedule.length > 0) {
         BackgroundGeolocation.startSchedule();
       }
-
+      this.onClickGetCurrentPosition();
       this.setState({
         enabled: state.enabled,
         bgGeo: state
