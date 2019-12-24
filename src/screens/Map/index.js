@@ -37,13 +37,6 @@ import { Device } from '../../utils/';
 const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = 0.00421;
 const STORAGE_KEY:string = "@pushapp:";
-const STATIONARY_REGION_FILL_COLOR = "rgba(200,0,0,0.2)"
-const STATIONARY_REGION_STROKE_COLOR = "rgba(200,0,0,0.2)"
-const GEOFENCE_STROKE_COLOR = "rgba(17,183,0,0.5)"
-const GEOFENCE_FILL_COLOR   ="rgba(17,183,0,0.2)"
-const GEOFENCE_STROKE_COLOR_ACTIVATED = "rgba(127,127,127,0.5)";
-const GEOFENCE_FILL_COLOR_ACTIVATED = "rgba(127,127,127, 0.2)";
-const POLYLINE_STROKE_COLOR = "rgba(32,64,255,0.6)";
 
 type IProps = {
   navigation: any;
@@ -136,9 +129,6 @@ class Map extends Component<IProps, IState> {
   }
 
   async configureBackgroundGeolocation() {
-    let orgname = 'push';
-    let username = 'push';
-    let id = 1;
 
     // Step 1:  Listen to events:
     BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onLocationError.bind(this));
@@ -257,8 +247,8 @@ class Map extends Component<IProps, IState> {
     });
     if (!marker) { return; }
 
-    marker.fillColor = GEOFENCE_STROKE_COLOR_ACTIVATED;
-    marker.strokeColor = GEOFENCE_STROKE_COLOR_ACTIVATED;
+    marker.fillColor = Theme.colors.geofenceStrokeColorActivated;
+    marker.strokeColor = Theme.colors.geofenceStrokeColorActivated;
 
     let coords = location.coords;
 
@@ -498,7 +488,7 @@ class Map extends Component<IProps, IState> {
           radius={hit.radius+1}
           center={hit.center}
           strokeWidth={1}
-          strokeColor={COLORS.black}>
+          strokeColor={Theme.colors.black}>
         </Circle>
       );
     });
@@ -510,13 +500,13 @@ class Map extends Component<IProps, IState> {
       let color = undefined;
       switch(event.action) {
         case 'ENTER':
-          color = COLORS.green;
+          color = Theme.colors.green;
           break;
         case 'EXIT':
-          color = COLORS.red;
+          color = Theme.colors.red;
           break;
         case 'DWELL':
-          color = COLORS.gold;
+          color = Theme.colors.yellow;
           break;
       }
       let markerStyle = {
@@ -529,7 +519,7 @@ class Map extends Component<IProps, IState> {
             key="polyline"
             coordinates={event.coordinates}
             geodesic={true}
-            strokeColor={COLORS.black}
+            strokeColor={Theme.colors.black}
             strokeWidth={1}
             zIndex={1}
             lineCap="square" />
@@ -593,8 +583,8 @@ class Map extends Component<IProps, IState> {
         longitude: geofence.longitude
       },
       identifier: geofence.identifier,
-      strokeColor:GEOFENCE_STROKE_COLOR,
-      fillColor: GEOFENCE_FILL_COLOR
+      strokeColor:Theme.colors.geofenceStrokeColor,
+      fillColor: Theme.colors.geofenceFillColor
     }
   }
 
@@ -608,7 +598,7 @@ class Map extends Component<IProps, IState> {
   onLongPress(params:any) {
     console.log("onLongPress");
     var coordinate = params.nativeEvent.coordinate;
-    this.props.navigation.navigate('Geofence', {
+    this.props.navigation.navigate('MapGeofence', {
       coordinate: coordinate
     });
   }
@@ -700,8 +690,8 @@ class Map extends Component<IProps, IState> {
           <Circle
             key={this.state.stationaryLocation.timestamp}
             radius={this.state.stationaryRadius||200}
-            fillColor={STATIONARY_REGION_FILL_COLOR}
-            strokeColor={STATIONARY_REGION_STROKE_COLOR}
+            fillColor={Theme.colors.stationaryRegionFillColor}
+            strokeColor={Theme.colors.stationaryRegionStrokeColor}
             strokeWidth={1}
             center={{latitude: this.state.stationaryLocation.latitude, longitude: this.state.stationaryLocation.longitude}}
           />
@@ -774,7 +764,6 @@ const styles = StyleSheet.create({
    width: Device.winWidth,
    justifyContent: 'flex-end',
    alignItems: 'center',
-   backgroundColor: '#000'
  },
  map: {
    ...StyleSheet.absoluteFillObject,
@@ -809,10 +798,9 @@ const styles = StyleSheet.create({
     height:12
   },
   markerIcon: {
-    borderWidth:1,
-    borderColor:'#000000',
-    // backgroundColor: COLORS.polyline_color,
-    backgroundColor: 'rgba(0,179,253, 0.6)',
+    borderWidth:0.5,
+    borderColor:Theme.colors.secondaryLight,
+    backgroundColor: Theme.colors.secondary,
     width: 10,
     height: 10,
     borderRadius: 5

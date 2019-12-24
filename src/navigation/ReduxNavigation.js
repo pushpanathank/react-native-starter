@@ -1,10 +1,12 @@
 import React  from 'react'
 import { BackHandler, ToastAndroid } from 'react-native'
 import { connect } from 'react-redux'
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
+
 
 // note here: imported App component
-import { App } from './App'
+// import { App } from './App'
+import { App } from "../store/";
 
 class ReduxNavigation extends React.Component {
   constructor (props) {

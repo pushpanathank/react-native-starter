@@ -2,44 +2,14 @@
 https://github.com/prscX/react-native-toasty
 */
 
-import React, { ErrorBoundary } from 'react';
+import React from 'react';
+import { Text } from 'react-native';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 import SplashScreen from 'react-native-splash-screen';
 
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import {
-  createReduxContainer,
-  createReactNavigationReduxMiddleware,
-  createNavigationReducer,
-} from 'react-navigation-redux-helpers'
-import AppNavigator from './AppNavigator'
-import * as reducers from './store/reducers'
-import ReduxNavigation from './ReduxNavigation'
-
-// combine reducers
-const navReducer = createNavigationReducer(AppNavigator)
-const rootReducers = combineReducers({
-  nav: navReducer,
-
-  // these are your reducers for your components
-  ...reducers,
-})
-
-// navigation redux middleware
-// Note: createReactNavigationReduxMiddleware must be run before createReduxContainer
-const middleware = createReactNavigationReduxMiddleware(
-  navStateSelector => 'root',
-  state => state.nav,
-)
-
-// reduxify navigator
-export const App = createReduxContainer(AppNavigator, 'root')
-
-// create store
-const store = createStore(
-  rootReducers,
-  applyMiddleware(middleware),
-)
+import { store, persistor } from './store/';
+import ReduxNavigation from './navigation/ReduxNavigation';
 
 // provide store and export app root component
 export default class Root extends React.Component {
@@ -53,7 +23,12 @@ export default class Root extends React.Component {
   render () {
     return (
       <Provider store={store}>
-        <ReduxNavigation/>
+        <PersistGate 
+          loading={<Text>Loading</Text>}
+          persistor={persistor}
+        >
+          <ReduxNavigation/>
+        </PersistGate>
       </Provider>
     )
   }

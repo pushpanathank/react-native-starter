@@ -16,7 +16,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // senderId: AppCons.gcmSenderId
+      senderId: AppCons.gcmSenderId
     };
 
     this.notif = new NotifService(this.onRegister.bind(this), this.onNotif.bind(this));

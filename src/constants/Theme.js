@@ -6,24 +6,30 @@ const indent = Scaling.moderateScale(baseSize);
 
 const colors = {
 
-  primary: '#7f71e7',
-  primaryDark: '#695bd1',
-  primaryLight: '#B4AEE8',
-  secondary: '#f58c23',
-  secondaryDark: '#BC6207',
-  secondaryLight: '#F49F49',
-  accent: "#F3534A",
-  tertiary: "#FFE358",
+  primary: '#3604bf',
+  primaryDark: '#1B025F',
+  primaryLight: '#724FD2',
+  secondary: '#ff5f00',
+  secondaryDark: '#7F2F00',
+  secondaryLight: '#FF9F66',
   white: '#FFFFFF',
   lightWhite:'#dfdfdf',
   black:'#323643',
   lightBlack:'#50535d',
-  lightBlack1:'#696b72',
-  red:'#ee0701',
+  red: "#dc1f1a",
+  yellow: "#edc914",
   green:'#24b124',
-  gray: "#838a9c",
-  gray2: "#acb5c1",
-  gray3: "#8d96a2",
+  gray: "#696b72",
+  gray2: "#838a9c",
+  gray3: "#acb5c1",
+
+  stationaryRegionFillColor: "rgba(200,0,0,0.2)",
+  stationaryRegionStrokeColor: "rgba(200,0,0,0.2)",
+  geofenceStrokeColor: "rgba(17,183,0,0.5)",
+  geofenceFillColor:"rgba(17,183,0,0.2)",
+  geofenceStrokeColorActivated: "rgba(127,127,127,0.5)",
+  geofenceFillColorActivated: "rgba(127,127,127, 0.2)",
+  polylineStrokeColor: "rgba(54, 4, 191, 0.8)",
 };
 
 const sizes = {
@@ -46,8 +52,8 @@ const sizes = {
 
   // General
   indent:indent,
-  indentsmall:Scaling.moderateScale(indent / 3),
-  indenthalf:Scaling.moderateScale(indent / 2),
+  indentSmall:Scaling.moderateScale(indent / 3),
+  indentHalf:Scaling.moderateScale(indent / 2),
   indent2x:Scaling.moderateScale(indent * 2),
   indent3x:Scaling.moderateScale(indent * 3),
   indent4x:Scaling.moderateScale(indent * 4),
