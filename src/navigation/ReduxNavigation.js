@@ -2,7 +2,7 @@ import React  from 'react'
 import { BackHandler, ToastAndroid } from 'react-native'
 import { connect } from 'react-redux'
 import { NavigationActions } from 'react-navigation';
-
+import { getCurrentRoute } from '../utils/Common';
 
 // note here: imported App component
 // import { App } from './App'
@@ -25,10 +25,11 @@ class ReduxNavigation extends React.Component {
   }
 
   onBackPress = () => {
-    const { nav, dispatch } = this.props
+    const { nav, dispatch, state } = this.props
 
+    const currentRoute = getCurrentRoute(state);
     // on the root page
-    if (nav.index === 0) {
+    if (nav.index === 0 || currentRoute=="Map") {
       const now = new Date().getTime()
 
       // pressed the back button within 2000ms twice
@@ -62,6 +63,7 @@ class ReduxNavigation extends React.Component {
 
 const mapStateToProps = state => ({
   nav: state.nav,
+  state: state,
 })
 
 export default connect(mapStateToProps)(ReduxNavigation)

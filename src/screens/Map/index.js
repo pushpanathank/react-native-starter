@@ -122,6 +122,11 @@ class Map extends Component<IProps, IState> {
 
   componentDidMount() {
     // Configure BackgroundGeolocation
+    this.props.nav.index=0;
+    this.focusListener = this.props.navigation.addListener('didFocus', () => {
+      console.log("didFocus");
+        this.props.nav.index=0;
+    });
     this.configureBackgroundGeolocation();
 
     // [Optional] Configure BackgroundFetch
@@ -190,6 +195,7 @@ class Map extends Component<IProps, IState> {
   // You must remove listeners when your component unmounts
   componentWillUnmount() {
     BackgroundGeolocation.removeListeners();
+    this.focusListener.remove();
   }
   onLocation(location:Location) {
     console.log('[location] -', location);
@@ -807,4 +813,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect()(Map)
+const mapStateToProps = state => ({
+  nav: state.nav,
+})
+
+export default connect(mapStateToProps)(Map)

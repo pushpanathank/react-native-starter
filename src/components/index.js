@@ -6,6 +6,8 @@ import Switch from "./Switch";
 import Text from "./Text";
 import Input from "./Input";
 
+import DrawerNavigator from "./DrawerNavigator";
+
 
 export { 
 	Block,
@@ -15,4 +17,6 @@ export {
 	Switch,
 	Text,
 	Input,
+	
+	DrawerNavigator,
 };

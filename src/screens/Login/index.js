@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
-import { View, Text, Button, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { connect } from 'react-redux';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 
 import FontAwesome, { FaLightIcons } from '../../components/icons';
-import { AppCons } from '../../constants/';
+import { Button, Block, Text, Input } from '../../components/';
+import { Theme } from '../../constants/';
 
 class Login extends React.Component {
 
@@ -15,9 +17,22 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      senderId: AppCons.gcmSenderId
+      senderId: "0"
     };
 
+  }
+
+  goTo(){
+    const { navigation, nav } = this.props;
+    navigation.navigate('Main');
+    /*navigation.dispatch(StackActions.reset(
+     {
+        index: 0,
+        actions: [
+          navigation.navigate('Home')
+        ]
+      }));*/
+    // navigation.navigate('MapSettings');
   }
 
   render () {
@@ -26,7 +41,17 @@ class Login extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Text>Login page</Text>
+        <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => this.goTo()}
+                style={[styles.btn]}
+              >
+                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Login</Text>
+              </Button> 
+            </Block>
+          </Block>
       </View>
     )
   }
