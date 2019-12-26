@@ -1,18 +1,19 @@
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 
-import { Login, Register, ForgotPassword, Home, Map, MapSettings, MapGeofence} from '../screens/';
+import { Home, Map, MapSettings, MapGeofence} from '../screens/';
 import { DrawerNavigator } from '../components/';
 
-import AuthStack from './AuthStack';
 
+const HomeStack = createStackNavigator({
+  Home: { screen: Home },
+}, {
+  initialRouteName: "Home",
+});
 
-const DrawerStack = createDrawerNavigator(
-  {
-    Map: {
+const MapStack = createStackNavigator({
+  Map: {
       navigationOptions: {
         // drawerIcon: ({ tintColor }) => (
         //   <Ionicons name="md-home" style={{ color: tintColor }} />
@@ -35,9 +36,21 @@ const DrawerStack = createDrawerNavigator(
       },
       screen: MapGeofence
     }
+}, {
+  initialRouteName: "Map",
+});
+
+const DrawerStack = createDrawerNavigator(
+  {
+    Home:{
+        screen: HomeStack
+    },
+    Map:{
+        screen: MapStack
+    },
   },
   {
-    initialRouteName: "Map",
+    initialRouteName: "Home",
     drawerType: "front",
     drawerWidth: 300,
     edgeWidth: 100,
@@ -57,16 +70,4 @@ const AppStack = createStackNavigator({
   },
 });
 
-const App = createSwitchNavigator({
-  Auth: {
-    screen: AuthStack
-  },
-  Main: {
-    screen: AppStack
-  }
-},
-{
-  initialRouteName: 'Auth',
-});
-
-export default createAppContainer(App)
+export default AppStack;

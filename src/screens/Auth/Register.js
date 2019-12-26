@@ -8,10 +8,10 @@ import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { Button, Block, Text, Input } from '../../components/';
 import { Theme } from '../../constants/';
 
-class Login extends React.Component {
+class Register extends React.Component {
 
   static navigationOptions = {
-    title: 'Login',
+    title: 'Register',
   }
 
   constructor(props) {
@@ -48,7 +48,18 @@ class Login extends React.Component {
                 onPress={() => this.goTo()}
                 style={[styles.btn]}
               >
-                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Login</Text>
+                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Register</Text>
+              </Button> 
+            </Block>
+          </Block>
+          <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => navigation.navigate('ForgotPassword');}
+                style={[styles.btn]}
+              >
+                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Forgot</Text>
               </Button> 
             </Block>
           </Block>
@@ -63,4 +74,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default connect()(Login)
+export default connect()(Register)

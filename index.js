@@ -8,12 +8,13 @@ import {name as appName} from './app.json';
 
 import BackgroundGeolocation from "react-native-background-geolocation";
 import BackgroundFetch from "react-native-background-fetch";
+import { gestureHandlerRootHOC } from 'react-native-gesture-handler'
 
 
 // Make BackgroundGeolocation API global for handy access in Javascript Debugger console
 global.BackgroundGeolocation = BackgroundGeolocation;
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => gestureHandlerRootHOC(App));
 
 
 /**

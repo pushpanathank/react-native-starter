@@ -1,4 +1,4 @@
-package com.pushpanathan.rnstarter;
+package com.transistorsoft.backgroundgeolocation.react;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;
@@ -20,6 +20,6 @@ public class MainActivity extends ReactActivity {
     
   @Override
   protected String getMainComponentName() {
-    return "RNStarter";
+    return "PushApp";
   }
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-
+import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { Button, Block, Text, Input } from '../../components/';
 import { BgGeoConfig } from '../../config/';
 import { Theme, AppCons } from '../../constants/';
@@ -37,7 +37,17 @@ class MapSettings extends React.Component {
 
   async getConfig(){
     let config = await AsyncStorage.getItem(STORAGE_KEY+"BgGeoConfig");
-    _BgGeoConfig = config ? JSON.parse(config) : BgGeoConfig;
+    _BgGeoConfig = config ? JSON.parse(config) : {...BgGeoConfig};
+    this.setState({
+        desiredAccuracy: ''+_BgGeoConfig.desiredAccuracy,
+        distanceFilter: ''+_BgGeoConfig.distanceFilter,
+        elasticityMultiplier: ''+_BgGeoConfig.elasticityMultiplier,
+        desiredOdometerAccuracy: ''+_BgGeoConfig.desiredOdometerAccuracy,
+        locationUpdateInterval: ''+_BgGeoConfig.locationUpdateInterval,
+        fastestLocationUpdateInterval: ''+_BgGeoConfig.fastestLocationUpdateInterval,
+        url: _BgGeoConfig.url,
+        userid: ''+_BgGeoConfig.params.userid,
+    });
   }
 
   onInputChange(key,val,type){
@@ -58,8 +68,13 @@ class MapSettings extends React.Component {
         config[key] = val;
       break;
     }
+    _BgGeoConfig = config;
+    console.log("_BgGeoConfig", config);
     AsyncStorage.setItem(STORAGE_KEY+"BgGeoConfig", JSON.stringify(config));
-    BackgroundGeolocation.ready(config, (state:State) => {
+  }
+
+  saveSettings(){
+    BackgroundGeolocation.ready(_BgGeoConfig, (state:State) => {
       console.log('- state: ', state);
       BackgroundGeolocation.stop();
       if (state.enabled) {
@@ -209,6 +224,26 @@ class MapSettings extends React.Component {
                   value={this.state.userid}
                   onChangeText={value => {this.onInputChange("userid", value, 1);}}
                 />
+            </Block>
+          </Block>
+          <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => this.saveSettings()}
+                style={[styles.btn]}
+              >
+                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Login</Text>
+              </Button> 
+            </Block>
+            <Block>
+              <Button ripple
+              color="secondary"
+                onPress={() => this.props.navigation.openDrawer()}
+                style={[{marginTop:0}]}
+              >
+                <Text>Menu</Text>
+              </Button>
             </Block>
           </Block>
        </ScrollView>

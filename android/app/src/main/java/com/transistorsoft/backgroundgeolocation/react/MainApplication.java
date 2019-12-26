@@ -1,4 +1,4 @@
-package com.pushpanathan.rnstarter;
+package com.transistorsoft.backgroundgeolocation.react;
 
 import android.app.Application;
 import android.content.Context;

@@ -154,6 +154,7 @@ class Map extends Component<IProps, IState> {
     // config.stopTimeout = 5;
     //
     let config = await AsyncStorage.getItem(STORAGE_KEY+"BgGeoConfig");
+    console.log("config", config);
     config = config ? JSON.parse(config) : BgGeoConfig;
     BackgroundGeolocation.ready(config, (state:State) => {
       console.log('- state: ', state);
@@ -755,6 +756,15 @@ class Map extends Component<IProps, IState> {
                 style={[styles.btn]}
               >
                 <Text white center > Settings </Text>
+              </Button>
+            </Block>
+            <Block>
+              <Button ripple
+              color="secondary"
+                onPress={() => this.props.navigation.openDrawer()}
+                style={[{marginTop:0}]}
+              >
+                <Text>Menu</Text>
               </Button>
             </Block>
           </Block>
