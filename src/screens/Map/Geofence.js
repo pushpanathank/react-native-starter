@@ -22,7 +22,7 @@ export default class GeofenceView extends Component<any, any> {
       radius: '50',
       notifyOnEntry: true,
       notifyOnExit: true,
-      notifyOnDwell: false,
+      notifyOnDwell: true,
       loiteringDelay: '0'
     }
   }

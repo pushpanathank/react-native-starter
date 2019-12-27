@@ -4,15 +4,11 @@ import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 
 
-import FontAwesome, { FaLightIcons } from '../../components/icons';
-import { Button, Block, Text, Input } from '../../components/';
-import { Theme } from '../../constants/';
+import FontAwesome, { FaLightIcons } from '../components/icons';
+import { Button, Block, Text, Input, Header } from '../components/';
+import { Theme } from '../constants/';
 
-class Home extends React.Component {
-
-  static navigationOptions = {
-    title: 'Home',
-  }
+class Home extends Component {
 
   constructor(props) {
     super(props);
@@ -22,36 +18,29 @@ class Home extends React.Component {
 
   }
 
-  goTo(){
-    const { navigation, nav } = this.props;
-    navigation.navigate('Main');
-    /*navigation.dispatch(StackActions.reset(
-     {
-        index: 0,
-        actions: [
-          navigation.navigate('Home')
-        ]
-      }));*/
-    // navigation.navigate('MapSettings');
-  }
-
   render () {
 
     const { navigation } = this.props;
 
     return (
-      <View style={styles.container}>
-        <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
-            <Block>
-              <Button ripple
-                color="secondary"
-                onPress={() => this.goTo()}
-                style={[styles.btn]}
-              >
-                <Text white center> <FontAwesome icon={FaLightIcons.location}/> Home</Text>
-              </Button> 
+      <View>
+        <Header
+          text="Home"
+          leftIconOnPress={()=>navigation.openDrawer()}
+        />
+        <View style={styles.container}>
+          <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+              <Block>
+                <Button ripple
+                  color="secondary"
+                  onPress={() => navigation.navigate('Map')}
+                  style={[styles.btn]}
+                >
+                  <Text white center> <FontAwesome icon={FaLightIcons.location}/> Map</Text>
+                </Button> 
+              </Block>
             </Block>
-          </Block>
+        </View>
       </View>
     )
   }

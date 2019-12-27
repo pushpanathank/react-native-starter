@@ -29,7 +29,8 @@ class ReduxNavigation extends React.Component {
 
     const currentRoute = getCurrentRoute(state);
     // on the root page
-    if (nav.index === 0 || currentRoute=="Map") {
+    // if (nav.index === 0) {
+    if (currentRoute=="Login" || currentRoute=="Home") {
       const now = new Date().getTime()
 
       // pressed the back button within 2000ms twice

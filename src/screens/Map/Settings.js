@@ -55,11 +55,13 @@ class MapSettings extends React.Component {
     this.setState({
       [key]: val
     });
-    let config = _BgGeoConfig;
+    let config = {..._BgGeoConfig};
     switch(type){
       case 1:
-        if(key=='userid'){
-          config['params']['userid'] = parseInt(val);
+        if(key=='userid' && parseInt(val)>=0){
+          config['params']={
+            userid:parseInt(val)
+          }
         }else{
           config[key] = parseInt(val);
         }
@@ -69,7 +71,7 @@ class MapSettings extends React.Component {
       break;
     }
     _BgGeoConfig = config;
-    console.log("_BgGeoConfig", config);
+    // console.log("_BgGeoConfig", config);
     AsyncStorage.setItem(STORAGE_KEY+"BgGeoConfig", JSON.stringify(config));
   }
 

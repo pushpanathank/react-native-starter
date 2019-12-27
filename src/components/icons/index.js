@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
+import { Theme } from '../../constants/';
 import FaLightIcons from './FontAwesomeLight';
 import FaBrandIcons from './FontAwesomeBrands';
 import FaDuotoneIcons from './FontAwesomeDuotone';
@@ -14,7 +15,7 @@ class Icon extends PureComponent {
 
   render() {
 
-    const { style, color, icon, type, ...props } = this.props;
+    const { style, color, size, icon, type, ...props } = this.props;
     // const [code, type] = (icon || '').split('|')
 
     let IconType = null;
@@ -42,7 +43,7 @@ class Icon extends PureComponent {
     return (
       <Text
         {...props}
-        style={[styles.icon, { color }, style, font]}
+        style={[styles.icon, { color:color|| Theme.colors.black , fontSize: size|| Theme.sizes.header }, style, font]}
         ref={component => this._root = component}
       >
         {icon}

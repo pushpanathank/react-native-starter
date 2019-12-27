@@ -7,6 +7,8 @@ import Text from "./Text";
 import Input from "./Input";
 
 import DrawerNavigator from "./DrawerNavigator";
+import Header from "./Header";
+import MapMenuOption from "./MapMenuOption";
 
 
 export { 
@@ -19,4 +21,6 @@ export {
 	Input,
 	
 	DrawerNavigator,
+	Header,
+	MapMenuOption,
 };

@@ -45,18 +45,16 @@ class Login extends React.Component {
             <Block>
               <Button ripple
                 color="secondary"
-                onPress={() => this.goTo()}
+                onPress={() => navigation.navigate('Home')}
                 style={[styles.btn]}
               >
                 <Text white center> <FontAwesome icon={FaLightIcons.location}/> Login</Text>
               </Button> 
             </Block>
-          </Block>
-          <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
             <Block>
               <Button ripple
                 color="secondary"
-                onPress={() => navigation.navigate('Register');}
+                onPress={() => navigation.navigate('Register')}
                 style={[styles.btn]}
               >
                 <Text white center> <FontAwesome icon={FaLightIcons.location}/> Register</Text>

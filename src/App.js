@@ -3,13 +3,14 @@ https://github.com/prscX/react-native-toasty
 */
 
 import React from 'react';
-import { Text } from 'react-native';
+import { Text, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import SplashScreen from 'react-native-splash-screen';
 
 import { store, persistor } from './store/';
 import ReduxNavigation from './navigation/ReduxNavigation';
+import { Theme } from './constants/';
 
 // provide store and export app root component
 export default class Root extends React.Component {
@@ -27,6 +28,7 @@ export default class Root extends React.Component {
           loading={<Text>Loading</Text>}
           persistor={persistor}
         >
+        <StatusBar backgroundColor={Theme.colors.primary} barStyle="light-content" />
           <ReduxNavigation/>
         </PersistGate>
       </Provider>

@@ -56,7 +56,7 @@ class Register extends React.Component {
             <Block>
               <Button ripple
                 color="secondary"
-                onPress={() => navigation.navigate('ForgotPassword');}
+                onPress={() => navigation.navigate('ForgotPassword')}
                 style={[styles.btn]}
               >
                 <Text white center> <FontAwesome icon={FaLightIcons.location}/> Forgot</Text>

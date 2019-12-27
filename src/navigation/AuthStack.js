@@ -1,4 +1,5 @@
-import { createStackNavigator } from 'react-navigation-stack';
+// import { StackViewTransitionConfigs } from 'react-navigation';
+import { createStackNavigator, StackViewTransitionConfigs  } from 'react-navigation-stack';
 
 
 import { Login, Register, ForgotPassword } from '../screens/';
@@ -16,6 +17,7 @@ const AuthStack = createStackNavigator({
 },{
   headerMode: 'none',
   initialRouteName: 'Login',
+  transitionConfig: () => StackViewTransitionConfigs.SlideFromRightIOS,
 });
 
 export default AuthStack;

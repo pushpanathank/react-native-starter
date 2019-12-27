@@ -3,15 +3,26 @@ import { Scaling } from '../utils/';
 
 const baseSize = 14;
 const indent = Scaling.moderateScale(baseSize);
-
+// #ff8fad, #31c9f3, #ffc654, #ff8352
 const colors = {
 
-  primary: '#3604bf',
-  primaryDark: '#1B025F',
-  primaryLight: '#724FD2',
-  secondary: '#ff5f00',
-  secondaryDark: '#7F2F00',
-  secondaryLight: '#FF9F66',
+  /*primary: '#31c9f3',
+  primaryDark: '#228CAA',
+  primaryLight: '#228CAA',
+  secondary: '#ff8352',
+  secondaryDark: '#B25B39',
+  secondaryLight: '#FFA885',*/
+
+  primary: '#ff8352',
+  primaryDark: '#B25B39',
+  primaryLight: '#FFA885',
+  secondary: '#ffc654',
+  secondaryDark: '#B28A3A',
+  secondaryLight: '#FFD787',
+
+  color1: '#ff8fad',
+  color2: '#31c9f3',
+
   white: '#FFFFFF',
   lightWhite:'#dfdfdf',
   black:'#323643',

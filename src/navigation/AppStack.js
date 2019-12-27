@@ -4,12 +4,14 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import { Home, Map, MapSettings, MapGeofence} from '../screens/';
 import { DrawerNavigator } from '../components/';
+import { Device } from '../utils/';
 
 
 const HomeStack = createStackNavigator({
   Home: { screen: Home },
 }, {
   initialRouteName: "Home",
+  headerMode: 'none',
 });
 
 const MapStack = createStackNavigator({
@@ -38,6 +40,7 @@ const MapStack = createStackNavigator({
     }
 }, {
   initialRouteName: "Map",
+  headerMode: 'none',
 });
 
 const DrawerStack = createDrawerNavigator(
@@ -50,9 +53,10 @@ const DrawerStack = createDrawerNavigator(
     },
   },
   {
+    headerMode: 'none',
     initialRouteName: "Home",
     drawerType: "front",
-    drawerWidth: 300,
+    drawerWidth: Device.winWidth-Device.winWidth/3,
     edgeWidth: 100,
     minSwipeDistance: 10,
     overlayColor: "rgba(0,0,0,0.6)",
@@ -68,6 +72,8 @@ const AppStack = createStackNavigator({
   Home: {
     screen: DrawerStack,
   },
+},{
+  headerMode: 'none',
 });
 
 export default AppStack;

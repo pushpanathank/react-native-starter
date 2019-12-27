@@ -28,7 +28,7 @@ import BackgroundFetch from "react-native-background-fetch";
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import { Button, Block, Text } from '../../components/';
+import { Button, Block, Text, Header, MapMenuOption } from '../../components/';
 import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
@@ -122,11 +122,6 @@ class Map extends Component<IProps, IState> {
 
   componentDidMount() {
     // Configure BackgroundGeolocation
-    this.props.nav.index=0;
-    this.focusListener = this.props.navigation.addListener('didFocus', () => {
-      console.log("didFocus");
-        this.props.nav.index=0;
-    });
     this.configureBackgroundGeolocation();
 
     // [Optional] Configure BackgroundFetch
@@ -196,7 +191,6 @@ class Map extends Component<IProps, IState> {
   // You must remove listeners when your component unmounts
   componentWillUnmount() {
     BackgroundGeolocation.removeListeners();
-    this.focusListener.remove();
   }
   onLocation(location:Location) {
     console.log('[location] -', location);
@@ -678,104 +672,101 @@ class Map extends Component<IProps, IState> {
     const { navigation } = this.props
 
     return (
-      <View style={styles.container}>
-        <MapView
-          ref="map"
-          provider={PROVIDER_GOOGLE}
-          style={styles.map}
-          customMapStyle={MapStyle}
-          showsUserLocation={this.state.showsUserLocation}
-          followsUserLocation={false}
-          onLongPress={this.onLongPress.bind(this)}
-          onPanDrag={this.onMapPanDrag.bind(this)}
-          scrollEnabled={this.state.mapScrollEnabled}
-          showsMyLocationButton={false}
-          showsPointsOfInterest={false}
-          showsScale={false}
-          showsTraffic={false}
-          toolbarEnabled={false}>
-          <Circle
-            key={this.state.stationaryLocation.timestamp}
-            radius={this.state.stationaryRadius||200}
-            fillColor={Theme.colors.stationaryRegionFillColor}
-            strokeColor={Theme.colors.stationaryRegionStrokeColor}
-            strokeWidth={1}
-            center={{latitude: this.state.stationaryLocation.latitude, longitude: this.state.stationaryLocation.longitude}}
-          />
-          <Polyline
-            tracksViewChanges={this.state.tracksViewChanges}
-            key="polyline"
-            coordinates={ this.state.coordinates }
-            geodesic={true}
-            strokeColor='rgba(0,179,253, 0.6)'
-            strokeWidth={6}
-            zIndex={0}
-          />
-          {this.renderMarkers()}
-          {this.renderStopZoneMarkers()}
-          {this.renderActiveGeofences()}
-          {this.renderGeofencesHit()}
-          {this.renderGeofencesHitEvents()}
-        </MapView>
-         {/* <MapView
-           provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-           style={styles.map}
-           customMapStyle={MapStyle}
-           region={{
-             latitude: 13.0827,
-             longitude: 80.2707,
-             latitudeDelta: 0.05,
-             longitudeDelta: 0.05,
-           }}
-         > 
-         </MapView>*/}
-         <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
-            <Block>
-              <Button ripple
-                color="secondary"
-                onPress={this.onClickGetCurrentPosition.bind(this)}
-                style={[styles.btn]}
-              >
-                <Text white center> <FontAwesome icon={FaLightIcons.location}/></Text>
-              </Button> 
-            </Block>
-            <Block>
-              <Button ripple
-                color="secondary"
-                onPress={() => this.onToggleEnabled()}
-                style={[styles.btn]}
-              >
-                <Text white center > { this.state.enabled ? 'Stop' : 'Start' } </Text>
-              </Button>
-            </Block>
+      <View>
+        <Header
+          text="Map"
+          leftIconOnPress={()=>navigation.openDrawer()}
+        />
+        <View style={styles.container}>
+          <MapView
+            ref="map"
+            provider={PROVIDER_GOOGLE}
+            style={styles.map}
+            customMapStyle={MapStyle}
+            showsUserLocation={this.state.showsUserLocation}
+            followsUserLocation={false}
+            onLongPress={this.onLongPress.bind(this)}
+            onPanDrag={this.onMapPanDrag.bind(this)}
+            scrollEnabled={this.state.mapScrollEnabled}
+            showsMyLocationButton={false}
+            showsPointsOfInterest={false}
+            showsScale={false}
+            showsTraffic={false}
+            toolbarEnabled={false}>
+            <Circle
+              key={this.state.stationaryLocation.timestamp}
+              radius={this.state.stationaryRadius||200}
+              fillColor={Theme.colors.stationaryRegionFillColor}
+              strokeColor={Theme.colors.stationaryRegionStrokeColor}
+              strokeWidth={1}
+              center={{latitude: this.state.stationaryLocation.latitude, longitude: this.state.stationaryLocation.longitude}}
+            />
+            <Polyline
+              tracksViewChanges={this.state.tracksViewChanges}
+              key="polyline"
+              coordinates={ this.state.coordinates }
+              geodesic={true}
+              strokeColor='rgba(0,179,253, 0.6)'
+              strokeWidth={6}
+              zIndex={0}
+            />
+            {this.renderMarkers()}
+            {this.renderStopZoneMarkers()}
+            {this.renderActiveGeofences()}
+            {this.renderGeofencesHit()}
+            {this.renderGeofencesHitEvents()}
+          </MapView>
+           {/* <MapView
+             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+             style={styles.map}
+             customMapStyle={MapStyle}
+             region={{
+               latitude: 13.0827,
+               longitude: 80.2707,
+               latitudeDelta: 0.05,
+               longitudeDelta: 0.05,
+             }}
+           > 
+           </MapView>*/}
+           <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+              <Block>
+                <Button ripple
+                  color="secondary"
+                  onPress={this.onClickGetCurrentPosition.bind(this)}
+                  style={[styles.btn]}
+                >
+                  <Text white center> <FontAwesome icon={FaLightIcons.location}/></Text>
+                </Button> 
+              </Block>
+              <Block>
+                <Button ripple
+                  color="secondary"
+                  onPress={() => this.onToggleEnabled()}
+                  style={[styles.btn]}
+                >
+                  <Text white center > { this.state.enabled ? 'Stop' : 'Start' } </Text>
+                </Button>
+              </Block>
 
-            <Block>
-              <Button ripple
-                color="secondary"
-                onPress={() => this.goToSettings()}
-                style={[styles.btn]}
-              >
-                <Text white center > Settings </Text>
-              </Button>
+              <Block>
+                <Button ripple
+                  color="secondary"
+                  onPress={() => this.goToSettings()}
+                  style={[styles.btn]}
+                >
+                  <Text white center > Settings </Text>
+                </Button>
+              </Block>
             </Block>
-            <Block>
-              <Button ripple
-              color="secondary"
-                onPress={() => this.props.navigation.openDrawer()}
-                style={[{marginTop:0}]}
-              >
-                <Text>Menu</Text>
-              </Button>
-            </Block>
-          </Block>
-       </View>
+         </View>
+      </View>
     )
     }
 }
 
 const styles = StyleSheet.create({
   container: {
-   ...StyleSheet.absoluteFillObject,
+   // ...StyleSheet.absoluteFillObject,
    height: Device.winHeight-100,
    width: Device.winWidth,
    justifyContent: 'flex-end',
@@ -814,12 +805,12 @@ const styles = StyleSheet.create({
     height:12
   },
   markerIcon: {
-    borderWidth:0.5,
-    borderColor:Theme.colors.secondaryLight,
-    backgroundColor: Theme.colors.secondary,
-    width: 10,
-    height: 10,
-    borderRadius: 5
+    borderWidth:2,
+    borderColor:Theme.colors.black,
+    backgroundColor: Theme.colors.color2,
+    width: 12,
+    height: 12,
+    borderRadius: 6
   },
 });
 
