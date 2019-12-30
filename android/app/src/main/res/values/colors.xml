@@ -2,6 +2,6 @@
 <resources>
 	<color name="white">#FFF</color>
     <color name="primary_dark">#000000</color>
-    <color name="status_bar_color">#ffc654</color>
+    <color name="status_bar_color">#ff8352</color>
     <!-- <color name="status_bar_color">#31c9f3</color> -->
 </resources>

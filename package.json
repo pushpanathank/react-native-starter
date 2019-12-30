@@ -25,6 +25,7 @@
     "react-native-material-menu": "^1.0.0",
     "react-native-push-notification": "^3.1.9",
     "react-native-reanimated": "^1.4.0",
+    "react-native-simple-auth": "^2.4.0",
     "react-native-splash-screen": "^3.2.0",
     "react-native-toasty": "^1.0.0",
     "react-navigation": "^4.0.0",

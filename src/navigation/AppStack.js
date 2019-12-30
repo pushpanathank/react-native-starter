@@ -1,4 +1,4 @@
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, StackViewTransitionConfigs } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 
@@ -41,6 +41,7 @@ const MapStack = createStackNavigator({
 }, {
   initialRouteName: "Map",
   headerMode: 'none',
+  transitionConfig: () => StackViewTransitionConfigs.SlideFromRightIOS,
 });
 
 const DrawerStack = createDrawerNavigator(
@@ -56,7 +57,7 @@ const DrawerStack = createDrawerNavigator(
     headerMode: 'none',
     initialRouteName: "Home",
     drawerType: "front",
-    drawerWidth: Device.winWidth-Device.winWidth/3,
+    drawerWidth: Device.winWidth-Device.winWidth/4,
     edgeWidth: 100,
     minSwipeDistance: 10,
     overlayColor: "rgba(0,0,0,0.6)",

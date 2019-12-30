@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
+import * as simpleAuthProviders from 'react-native-simple-auth';
 
 
 import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { Button, Block, Text, Input } from '../../components/';
+import { SocialAuth } from '../../config/';
 import { Theme } from '../../constants/';
 
 class Login extends React.Component {
@@ -17,22 +19,9 @@ class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      senderId: "0"
+      senderId: "0",
     };
 
-  }
-
-  goTo(){
-    const { navigation, nav } = this.props;
-    navigation.navigate('Main');
-    /*navigation.dispatch(StackActions.reset(
-     {
-        index: 0,
-        actions: [
-          navigation.navigate('Home')
-        ]
-      }));*/
-    // navigation.navigate('MapSettings');
   }
 
   render () {
@@ -41,7 +30,18 @@ class Login extends React.Component {
 
     return (
       <View style={styles.container}>
-        <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+        <Block row padding={[0,Theme.sizes.indent]}>
+            <Block>
+              <Button ripple
+                color="secondary"
+                onPress={() => navigation.navigate('Home')}
+                style={[styles.btn]}
+              >
+                <Text black center> Login With Google</Text>
+              </Button> 
+            </Block>
+          </Block>
+          <Block row padding={[0,Theme.sizes.indent]}>
             <Block>
               <Button ripple
                 color="secondary"

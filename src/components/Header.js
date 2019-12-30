@@ -7,7 +7,7 @@ import Button from './Button';
 
 import { Theme } from '../constants/';
 
-const HITSLOP = 8;
+const HITSLOP = 10;
 const hitslopObj = {
   top: HITSLOP,
   left: HITSLOP,
@@ -90,6 +90,7 @@ export default class Header extends Component {
         {!rightDisable && (
           <TouchableOpacity
             style={rightCompStyle(right)}
+            hitSlop={hitslopObj}
             onPress={rightIconOnPress}
           >
             {rightIconComponent || (
@@ -125,13 +126,13 @@ Header.propTypes = {
 };
 
 Header.defaultProps = {
-  left: 16,
-  right: 16,
-  height: 50,
+  left: Theme.sizes.indent,
+  right: Theme.sizes.indent,
+  height: Theme.sizes.headerHeight,
   width: "100%",
   leftIconSize: Theme.sizes.h5,
   rightIconSize: Theme.sizes.h3,
-  text: "PushApp",
+  text: "Mahizh",
   rightIconName: FaLightIcons.ellipsisV,
   rightIconType: "light",
   backgroundColor: Theme.colors.primary,

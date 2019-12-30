@@ -28,11 +28,11 @@ import BackgroundFetch from "react-native-background-fetch";
 
 import AsyncStorage from '@react-native-community/async-storage';
 
-import { Button, Block, Text, Header, MapMenuOption } from '../../components/';
+import { Button, Block, Text, Header, MenuOptionMap } from '../../components/';
 import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
-import { Device } from '../../utils/';
+import appStyles from '../../styles/';
 
 const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = 0.00421;
@@ -117,6 +117,7 @@ class Map extends Component<IProps, IState> {
       settings: {},
       // BackgroundGeolocation state
       bgGeo: {didLaunchInBackground: false, enabled: false, schedulerEnabled: false, trackingMode: 1, odometer: 0},
+      optMenu:null
     };
   }
 
@@ -445,7 +446,7 @@ class Map extends Component<IProps, IState> {
           coordinate={marker.coordinate}
           anchor={{x:0, y:0.1}}
           title={marker.title}>
-          <View style={[styles.markerIcon]}></View>
+          <View style={[appStyles.markerIcon]}></View>
         </Marker>
       ));
     });
@@ -459,7 +460,7 @@ class Map extends Component<IProps, IState> {
         tracksViewChanges={this.state.tracksViewChanges}
         coordinate={stopZone.coordinate}
         anchor={{x:0, y:0}}>
-        <View style={[styles.stopZoneMarker]}></View>
+        <View style={[appStyles.stopZoneMarker]}></View>
       </Marker>
     ));
   }
@@ -529,14 +530,14 @@ class Map extends Component<IProps, IState> {
             key="edge_marker"
             coordinate={event.coordinates[0]}
             anchor={{x:0, y:0.1}}>
-            <View style={[styles.geofenceHitMarker, markerStyle]}></View>
+            <View style={[appStyles.geofenceHitMarker, markerStyle]}></View>
           </Marker>
           <Marker
             tracksViewChanges={this.state.tracksViewChanges}
             key="location_marker"
             coordinate={event.coordinates[1]}
             anchor={{x:0, y:0.1}}>
-            <View style={styles.markerIcon}></View>
+            <View style={appStyles.markerIcon}></View>
           </Marker>
         </View>
       );
@@ -661,10 +662,10 @@ class Map extends Component<IProps, IState> {
     };
   }
 
-
-  goToSettings(){
-    const { navigation } = this.props;
-    navigation.navigate('MapSettings');
+  assignMenuref = (ref) =>{
+    this.setState({
+      optMenu: ref
+    });
   }
 
   render () {
@@ -672,16 +673,18 @@ class Map extends Component<IProps, IState> {
     const { navigation } = this.props
 
     return (
-      <View>
+      <View style={appStyles.row}>
         <Header
           text="Map"
           leftIconOnPress={()=>navigation.openDrawer()}
+          rightIconComponent={<MenuOptionMap menuref={this.assignMenuref} navigation={navigation} />}
+          rightIconOnPress={()=>this.state.optMenu.show()}
         />
-        <View style={styles.container}>
+        <View style={appStyles.mapContainer}>
           <MapView
             ref="map"
             provider={PROVIDER_GOOGLE}
-            style={styles.map}
+            style={appStyles.mapView}
             customMapStyle={MapStyle}
             showsUserLocation={this.state.showsUserLocation}
             followsUserLocation={false}
@@ -716,45 +719,23 @@ class Map extends Component<IProps, IState> {
             {this.renderGeofencesHit()}
             {this.renderGeofencesHitEvents()}
           </MapView>
-           {/* <MapView
-             provider={PROVIDER_GOOGLE} // remove if not using Google Maps
-             style={styles.map}
-             customMapStyle={MapStyle}
-             region={{
-               latitude: 13.0827,
-               longitude: 80.2707,
-               latitudeDelta: 0.05,
-               longitudeDelta: 0.05,
-             }}
-           > 
-           </MapView>*/}
-           <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+           <Block row padding={[0,Theme.sizes.indent]}>
               <Block>
                 <Button ripple
                   color="secondary"
                   onPress={this.onClickGetCurrentPosition.bind(this)}
-                  style={[styles.btn]}
+                  style={[appStyles.mapBtns, appStyles.mapBtnBottomLeft]}
                 >
-                  <Text white center> <FontAwesome icon={FaLightIcons.location}/></Text>
+                  <FontAwesome icon={FaLightIcons.location}/>
                 </Button> 
               </Block>
               <Block>
                 <Button ripple
                   color="secondary"
                   onPress={() => this.onToggleEnabled()}
-                  style={[styles.btn]}
+                  style={[appStyles.mapBtns, appStyles.mapBtnBottomRight]}
                 >
-                  <Text white center > { this.state.enabled ? 'Stop' : 'Start' } </Text>
-                </Button>
-              </Block>
-
-              <Block>
-                <Button ripple
-                  color="secondary"
-                  onPress={() => this.goToSettings()}
-                  style={[styles.btn]}
-                >
-                  <Text white center > Settings </Text>
+                  <FontAwesome icon={this.state.enabled ? FaLightIcons.pause : FaLightIcons.play }/>
                 </Button>
               </Block>
             </Block>
@@ -765,53 +746,7 @@ class Map extends Component<IProps, IState> {
 }
 
 const styles = StyleSheet.create({
-  container: {
-   // ...StyleSheet.absoluteFillObject,
-   height: Device.winHeight-100,
-   width: Device.winWidth,
-   justifyContent: 'flex-end',
-   alignItems: 'center',
- },
- map: {
-   ...StyleSheet.absoluteFillObject,
-   backgroundColor: '#ffffff'
- },
- bottomtab:{
-  position: 'absolute',
-  bottom:0,
-  width: '100%',
-  height: 50,
-  backgroundColor: '#fff'
- },
- btn:{
-  marginRight: 5
- },
- stopZoneMarker: {
-    borderWidth:1,
-    borderColor: 'red',
-    backgroundColor: "rgba(200,0,0,0.2)",
-    opacity: 0.2,
-    borderRadius: 15,
-    zIndex: 0,
-    width: 30,
-    height: 30
-  },
-  geofenceHitMarker: {
-    borderWidth: 1,
-    borderColor:'black',
-    borderRadius: 6,
-    zIndex: 10,
-    width: 12,
-    height:12
-  },
-  markerIcon: {
-    borderWidth:2,
-    borderColor:Theme.colors.black,
-    backgroundColor: Theme.colors.color2,
-    width: 12,
-    height: 12,
-    borderRadius: 6
-  },
+
 });
 
 const mapStateToProps = state => ({
