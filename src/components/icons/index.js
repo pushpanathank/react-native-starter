@@ -1,3 +1,4 @@
+// https://github.com/entria/react-native-fontawesome
 import React, { PureComponent } from 'react';
 import { Text, StyleSheet } from 'react-native';
 
