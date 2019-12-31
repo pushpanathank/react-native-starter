@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { Theme } from './constants/';
-import { Device } from './utils/';
+import { Device, Scaling } from './utils/';
 
 export default StyleSheet.create({
     row: {
@@ -50,6 +50,10 @@ export default StyleSheet.create({
         paddingHorizontal:Theme.sizes.indent
     },
 
+    loginLogo:{
+        width: Scaling.moderateScale(130)
+    },
+
     mapContainer: {
         // ...StyleSheet.absoluteFillObject,
         height: Device.winHeight-(Theme.sizes.headerHeight-30),
@@ -96,11 +100,11 @@ export default StyleSheet.create({
     },
     mapBtnBottomLeft:{
         left:0,
-        bottom:60
+        bottom:40
     },
     mapBtnBottomRight:{
         right:0,
-        bottom:60
+        bottom:40
     },
 
 });

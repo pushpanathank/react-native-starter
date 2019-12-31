@@ -1,1 +1,3 @@
-export * from './counter'
+import AuthTypes from './Auth'
+
+export { AuthTypes }

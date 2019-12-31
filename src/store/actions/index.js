@@ -1,1 +1,5 @@
-export * from './counter'
+import * as AuthActions from './Auth'
+
+export {
+  AuthActions,
+}

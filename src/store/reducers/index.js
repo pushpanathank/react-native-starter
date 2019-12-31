@@ -1,5 +1,5 @@
-import counter from './counter'
+import Auth from './Auth'
 
 export {
-  counter,
+  Auth,
 }
