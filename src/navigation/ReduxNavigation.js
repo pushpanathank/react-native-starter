@@ -1,7 +1,8 @@
 import React  from 'react'
-import { BackHandler, ToastAndroid } from 'react-native'
+import { BackHandler } from 'react-native'
 import { connect } from 'react-redux'
 import { NavigationActions } from 'react-navigation';
+import { RNToasty } from 'react-native-toasty';
 import { getCurrentRoute } from '../utils/Common';
 
 // note here: imported App component
@@ -39,13 +40,7 @@ class ReduxNavigation extends React.Component {
         return false
       }
 
-      ToastAndroid.showWithGravityAndOffset(
-        'Press Again to Exit App',
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM,
-        0,
-        100,
-      )
+      RNToasty.Show({ title: 'Press Again to Exit App' });
       this.state.backButtonLastPressTime = now
       return true
     }

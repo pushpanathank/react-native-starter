@@ -33,7 +33,8 @@ class MapSettings extends React.Component {
         fastestLocationUpdateInterval: ''+_BgGeoConfig.fastestLocationUpdateInterval,
         url: _BgGeoConfig.url,
         userid: ''+_BgGeoConfig.params.userid,
-        optMenu:null
+        optMenu:null,
+        deferTime: ''+_BgGeoConfig.deferTime
     }
   }
 
@@ -49,6 +50,7 @@ class MapSettings extends React.Component {
         fastestLocationUpdateInterval: ''+_BgGeoConfig.fastestLocationUpdateInterval,
         url: _BgGeoConfig.url,
         userid: ''+_BgGeoConfig.params.userid,
+        deferTime: ''+_BgGeoConfig.deferTime
     });
   }
 
@@ -110,109 +112,100 @@ class MapSettings extends React.Component {
           rightIconComponent={<MenuOptionMap menuref={this.assignMenuref} navigation={navigation} />}
           rightIconOnPress={()=>this.state.optMenu.show()}
         />
-        <ScrollView style={appStyles.row}>
-            <Block row padding={[0,Theme.sizes.indent]}>
+        <ScrollView style={[appStyles.row,{padding: Theme.sizes.indent}]}>
+            <Block row>
               <Block>
-                <Text h3>Map</Text>
+                <Text h4 center>Map</Text>
               </Block>
             </Block>
-           <Block row padding={[0,Theme.sizes.indent]}>
+           <Block row>
               <Block>
                 <Text>desiredAccuracy</Text>
-                <Text>-2, -1, 0, 10, 100, 1000</Text>
+                <Text small>-2, -1, 0, 10, 100, 1000</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.desiredAccuracy}
-                    onChangeText={value => {this.onInputChange("desiredAccuracy", value, 1);}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.desiredAccuracy}
+                  onChangeText={value => {this.onInputChange("desiredAccuracy", value, 1);}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
                 <Text>distanceFilter</Text>
-                <Text>0, 10, 20, 50, 100, 500</Text>
+                <Text small>0, 10, 20, 50, 100, 500</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.distanceFilter}
-                    onChangeText={value => {this.onInputChange("distanceFilter", value, 1 );}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.distanceFilter}
+                  onChangeText={value => {this.onInputChange("distanceFilter", value, 1 );}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
                 <Text>elasticityMultiplier</Text>
-                <Text>0, 1, 2, 3, 5, 10</Text>
+                <Text small>0, 1, 2, 3, 5, 10</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.elasticityMultiplier}
-                    onChangeText={value => {this.onInputChange("elasticityMultiplier", value, 1);}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.elasticityMultiplier}
+                  onChangeText={value => {this.onInputChange("elasticityMultiplier", value, 1);}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
                 <Text>desiredOdometerAccuracy</Text>
-                <Text>10, 20, 50, 100, 500</Text>
+                <Text small>10, 20, 50, 100, 500</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.desiredOdometerAccuracy}
-                    onChangeText={value => {this.onInputChange("desiredOdometerAccuracy", value, 1);}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.desiredOdometerAccuracy}
+                  onChangeText={value => {this.onInputChange("desiredOdometerAccuracy", value, 1);}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
                 <Text>locationUpdateInterval</Text>
-                <Text>0, 1000, 5000, 10000, 30000, 60000</Text>
+                <Text small>0, 1000, 5000, 10000, 30000, 60000</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.locationUpdateInterval}
-                    onChangeText={value => {this.onInputChange("locationUpdateInterval", value, 1);}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.locationUpdateInterval}
+                  onChangeText={value => {this.onInputChange("locationUpdateInterval", value, 1);}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
                 <Text>fastestLocationUpdateInterval</Text>
-                <Text>0, 1000, 5000, 10000, 30000, 60000</Text>
+                <Text small>0, 1000, 5000, 10000, 30000, 60000</Text>
               </Block>
-              <Block>
-                <Input
-                    textColor={Theme.colors.black}
-                    borderColor={Theme.colors.black}
-                    activeBorderColor={Theme.colors.black}
-                    returnKeyType={"next"}
-                    value={this.state.fastestLocationUpdateInterval}
-                    onChangeText={value => {this.onInputChange("fastestLocationUpdateInterval", value, 1);}}
-                  />
-              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.fastestLocationUpdateInterval}
+                  onChangeText={value => {this.onInputChange("fastestLocationUpdateInterval", value, 1);}}
+                />
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
+              <Text>URL</Text>
+            </Block>
+            <Block row>
               <Block>
                 <Input
                     textColor={Theme.colors.black}
@@ -224,12 +217,25 @@ class MapSettings extends React.Component {
                   />
               </Block>
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]}>
+            <Block row>
               <Block>
-                <Text h3>User</Text>
+                <Text>deferTime</Text>
+              </Block>
+              <Input
+                  textColor={Theme.colors.black}
+                  borderColor={Theme.colors.black}
+                  activeBorderColor={Theme.colors.black}
+                  returnKeyType={"next"}
+                  value={this.state.deferTime}
+                  onChangeText={value => {this.onInputChange("deferTime", value, 1);}}
+                />
+            </Block>
+            <Block row>
+              <Block>
+                <Text h4 center>User</Text>
               </Block>
             </Block>
-           <Block row padding={[0,Theme.sizes.indent]}>
+           <Block row>
               <Block>
                 <Text>userid</Text>
               </Block>
@@ -244,7 +250,7 @@ class MapSettings extends React.Component {
                   />
               </Block>
             </Block>
-            <Block row padding={[0,Theme.sizes.indent]} style={styles.bottomtab}>
+            <Block row style={styles.bottomtab}>
               <Block>
                 <Button ripple
                   color="secondary"
