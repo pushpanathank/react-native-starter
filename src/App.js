@@ -7,13 +7,16 @@ import { Text, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import SplashScreen from 'react-native-splash-screen';
+import codePush from "react-native-code-push";
 
 import { store, persistor } from './store/';
 import ReduxNavigation from './navigation/ReduxNavigation';
 import { Theme } from './constants/';
 
+let codePushOptions = { checkFrequency: codePush.CheckFrequency.ON_APP_RESUME };
+
 // provide store and export app root component
-export default class Root extends React.Component {
+class Root extends React.Component {
 
   componentDidMount() {
       // do stuff while splash screen is shown
@@ -35,6 +38,8 @@ export default class Root extends React.Component {
     )
   }
 }
+
+export default codePush(codePushOptions)(Root);
 
 // todo: disable yellow box when u are extremely angry
 console.disableYellowBox = true
