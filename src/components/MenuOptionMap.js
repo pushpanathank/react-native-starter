@@ -2,6 +2,8 @@
 import React, {Component, memo} from 'react';
 import { Platform } from 'react-native';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
+import BackgroundGeolocation from "react-native-background-geolocation";
+import { RNToasty } from 'react-native-toasty';
 
 import Text from './Text';
 import FontAwesome, { FaLightIcons } from './icons';
@@ -27,6 +29,38 @@ class MenuOptionMap extends Component {
     this.hideMenu()
   }
 
+  async emailLog() {
+    let Logger = BackgroundGeolocation.logger;
+    let email = "pushpanathank91@gmail.com";
+        Logger.emailLog(email).then((succes) => {
+          console.log('[emailLog] success');
+        }).catch((error) => {
+          console.log("email log error", error);
+        });
+  }
+
+  resetOdometer() {
+    BackgroundGeolocation.setOdometer(0).then(location => {
+      RNToasty.Show({ title: 'Reset odometer success' });
+    }).catch(error => {
+      RNToasty.Show({ title: 'Reset odometer failure: ' + error });
+    });
+  }
+
+  async sync() {
+    let count = await BackgroundGeolocation.getCount();
+    if (!count) {
+      RNToasty.Show({ title: 'Locations database is empty'});
+      return;
+    }
+    RNToasty.Show({ title: 'Sync records' + count });
+    BackgroundGeolocation.sync((rs) => {
+      RNToasty.Show({ title: 'Sync success (' + count + ' records)' });
+    }, (error:string) => {
+      RNToasty.Show({ title: 'Sync error: ' + error });
+    });
+  }
+
   render() {
     return (
       <Menu
@@ -40,7 +74,9 @@ class MenuOptionMap extends Component {
         >
         <MenuItem onPress={this.goToSettings}>Settings</MenuItem>
         <MenuDivider />
-        <MenuItem onPress={this.hideMenu}>Menu item 4</MenuItem>
+        <MenuItem onPress={this.resetOdometer}>Reset odometer</MenuItem>
+        <MenuItem onPress={this.sync}>Sync</MenuItem>
+        <MenuItem onPress={this.emailLog}>Email Log</MenuItem>
       </Menu>
     );
   }

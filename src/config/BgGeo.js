@@ -32,7 +32,7 @@ const config = {
   logMaxDays:3,
   locationUpdateInterval:1000,
   fastestLocationUpdateInterval:0,
-  deferTime:0,
+  deferTime:5000,
   geofenceModeHighAccuracy:true,
   triggerActivities:'in_vehicle, on_bicycle, on_foot, running, walking',
   enableHeadless:true,
@@ -57,7 +57,7 @@ const config = {
   },
   speedJumpFilter:300,
   isMoving:true,
-  stopOnStationary:true, //--
+  stopOnStationary:false, //--
   locationsOrderDirection: "DESC",
   method: "POST",
   params: {
