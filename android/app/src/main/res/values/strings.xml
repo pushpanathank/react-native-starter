@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mahizh</string>
-    <string moduleConfig="true" name="CodePushDeploymentKey">CT7QUhQMQnGUt2Pcro0nTnKmHmUxCFiSmQLOe</string>
+    <string moduleConfig="true" name="CodePushDeploymentKey">q6u2Z7fFr9LfOtWA61hUuMmCA1p097cSMQ3qt</string>
+    <string name="CodePushPublicKey"> </string>
 </resources>

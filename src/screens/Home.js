@@ -36,7 +36,7 @@ class Home extends Component {
                   onPress={() => navigation.navigate('Map')}
                   style={[styles.btn]}
                 >
-                  <Text white center> <FontAwesome icon={FaLightIcons.location}/> Map</Text>
+                  <Text center> Go to Map 12</Text>
                 </Button> 
               </Block>
             </Block>

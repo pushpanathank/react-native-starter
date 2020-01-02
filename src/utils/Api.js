@@ -61,12 +61,3 @@ export default {
   patch: (path, options) => execute(path, 'PATCH', options),
   delete: (path, options) => execute(path, 'DELETE', options),
 };
-
-const baseURL = "http://pushpanathan.com/services/";
-export default {
-  gcmSenderId: "581159654063",
-  baseURL : baseURL,
-  addLocationUrl : "location/addLoc",
-
-  // locationUrl : "http:\/\/tracker.transistorsoft.com\/api\/locations"
-}
