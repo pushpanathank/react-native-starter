@@ -1,4 +1,4 @@
-import { AppCons, Strings } from '../constants/';
+import { AppCons, Strings, Theme } from '../constants/';
 import BackgroundGeolocation from "react-native-background-geolocation";
 
 const config = {
@@ -32,7 +32,7 @@ const config = {
   logMaxDays:3,
   locationUpdateInterval:1000,
   fastestLocationUpdateInterval:0,
-  deferTime:5000,
+  deferTime:0,
   geofenceModeHighAccuracy:true,
   triggerActivities:'in_vehicle, on_bicycle, on_foot, running, walking',
   enableHeadless:true,
@@ -47,7 +47,7 @@ const config = {
       layout: "",
       title: Strings.bgNotificationTitle,
       text: Strings.bgNotificationText,
-      color: "#000000",
+      color: Theme.colors.primary,
       channelName: "TSLocationManager",
       smallIcon: "ic_launcher",
       largeIcon: "ic_launcher",
