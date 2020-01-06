@@ -3,7 +3,7 @@ https://github.com/prscX/react-native-toasty
 */
 
 import React from 'react';
-import { Text, StatusBar } from 'react-native';
+import { Text, StatusBar, Alert } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import SplashScreen from 'react-native-splash-screen';
@@ -13,6 +13,7 @@ import { RNToasty } from 'react-native-toasty';
 import { store, persistor } from './store/';
 import ReduxNavigation from './navigation/ReduxNavigation';
 import { Theme } from './constants/';
+import { NotifService } from './utils/';
 
 let codePushOptions = { 
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
@@ -22,6 +23,10 @@ let codePushOptions = {
 
 // provide store and export app root component
 class Root extends React.Component {
+  constructor(props) {
+    super(props);
+    this.notif = new NotifService();
+  }
 
   componentDidMount() {
       // do stuff while splash screen is shown
@@ -32,6 +37,7 @@ class Root extends React.Component {
           updateDialog: { title: "An update is available!" }, 
           // installMode: codePush.installMode.IMMEDIATE
         },this.codePushStatusDidChange);
+        this.notif.configure();
   }
 
   codePushStatusDidChange(status) {

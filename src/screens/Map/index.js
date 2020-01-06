@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, StyleSheet, TextInput, Alert, AppState } from 'react-native';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 import { RNToasty } from 'react-native-toasty';
 import MapView, {Marker, Polyline, Circle, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -33,6 +34,7 @@ import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
 import appStyles from '../../styles/';
+import { NotifService } from '../../utils/';
 
 const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = 0.00421;
@@ -119,6 +121,7 @@ class Map extends Component<IProps, IState> {
       bgGeo: {didLaunchInBackground: false, enabled: false, schedulerEnabled: false, trackingMode: 1, odometer: 0},
       optMenu:null
     };
+    this.notif = new NotifService();
   }
 
   componentDidMount() {
@@ -126,11 +129,11 @@ class Map extends Component<IProps, IState> {
     this.configureBackgroundGeolocation();
 
     // [Optional] Configure BackgroundFetch
-    // this.configureBackgroundFetch();
+    this.configureBackgroundFetch();
   }
 
   async configureBackgroundGeolocation() {
-
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
     // Step 1:  Listen to events:
     BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onLocationError.bind(this));
     BackgroundGeolocation.onMotionChange(this.onMotionChange.bind(this));
@@ -150,10 +153,10 @@ class Map extends Component<IProps, IState> {
     // config.stopTimeout = 5;
     //
     let config = await AsyncStorage.getItem(STORAGE_KEY+"BgGeoConfig");
-    console.log("config", config);
+    // console.log("config", config);
     config = config ? JSON.parse(config) : BgGeoConfig;
     BackgroundGeolocation.ready(config, (state:State) => {
-      console.log('- state: ', state);
+      console.log(time, '- state: ', state);
       if (state.schedule && state.schedule.length > 0) {
         BackgroundGeolocation.startSchedule();
       }
@@ -169,6 +172,7 @@ class Map extends Component<IProps, IState> {
 
   configureBackgroundFetch() {
     // [Optional] Configure BackgroundFetch.
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
     BackgroundFetch.configure({
       minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
       stopOnTerminate: false, // <-- Android-only,
@@ -180,9 +184,9 @@ class Map extends Component<IProps, IState> {
       requiresBatteryNotLow: false,
       requiresStorageNotLow: false
     }, async () => {
-      console.log('- BackgroundFetch start');
+      console.log(time, '- BackgroundFetch start');
       let location = await BackgroundGeolocation.getCurrentPosition({persist: true, samples:1, extras: {'context': 'background-fetch-position'}});
-      console.log('- BackgroundFetch current position: ', location) // <-- don't see this
+      console.log(time, '- BackgroundFetch current position: ', location) // <-- don't see this
       BackgroundFetch.finish(BackgroundFetch.FETCH_RESULT_NEW_DATA);
     }, (error) => {
       console.log('[js] RNBackgroundFetch failed to start')
@@ -194,7 +198,9 @@ class Map extends Component<IProps, IState> {
     BackgroundGeolocation.removeListeners();
   }
   onLocation(location:Location) {
-    console.log('[location] -', location);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'1',message:time + " [onLocation]"});
+    console.log(time,' [location] -', location);
     if (!location.sample) {
       this.addMarker(location);
       this.setState({
@@ -204,16 +210,24 @@ class Map extends Component<IProps, IState> {
     this.setCenter(location);
   }
   onLocationError(errorCode:LocationError) {
-    console.log('[location] ERROR - ', errorCode);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'2',message:time + " [onLocationError]"});
+    console.log(time,' [location] ERROR - ', errorCode);
   }
   onHeartbeat(params:HeartbeatEvent) {
-    console.log("[heartbeat] - ", params.location);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'3',message:time + " [onHeartbeat]"});
+    console.log(time, " [heartbeat] - ", params.location);
   }
   onHttp(response:HttpEvent) {
-    console.log('[http] - ', JSON.stringify(response));
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'4',message:time + " [onHttp]"});
+    console.log(time, ' [http] - ', JSON.stringify(response));
   }
   onSchedule(state:State) {
-    console.log("[schedule] - ", state.enabled, state);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'5',message:time + " [onSchedule]"});
+    console.log(time," [schedule] - ", state.enabled, state);
     this.setState({
       enabled: state.enabled
     });
@@ -228,7 +242,9 @@ class Map extends Component<IProps, IState> {
       return off.indexOf(geofence.identifier) < 0;
     });
 
-    console.log('[geofenceschange] - ', event);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'6',message:time + " [onGeofencesChange]"});
+    console.log(time,' [geofenceschange] - ', event);
     // Add new "on" geofences.
     on.forEach((geofence:Geofence) => {
       var marker = geofences.find(function(m:Geofence) { return m.identifier === geofence.identifier;});
@@ -241,7 +257,9 @@ class Map extends Component<IProps, IState> {
     });
   }
   onGeofence(event:GeofenceEvent) {
-    console.log('[geofence] - ', event);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'7',message:time + " [onGeofence]"});
+    console.log(time,' [geofence] - ', event);
     let location:Location = event.location;
     let geofences = this.state.geofences || [];
     var marker = geofences.find((m:any) => {
@@ -289,18 +307,26 @@ class Map extends Component<IProps, IState> {
     });
   }
   onPowerSaveChange(isPowerSaveMode:boolean) {
-    console.log('[powersavechange] - ', isPowerSaveMode);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'8',message:time + " [onPowerSaveChange]"});
+    console.log(time,' [powersavechange] - ', isPowerSaveMode);
   }
   onConnectivityChange(event:ConnectivityChangeEvent) {
-    console.log('[connectivitychange] - ', event);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'9',message:time + " [onConnectivityChange]"});
+    console.log(time,' [connectivitychange] - ', event);
     RNToasty.Show({ title: '[connectivitychange] - ' + event.connected });
   }
   onEnabledChange(enabled:boolean) {
-    console.log('[enabledchange] - ', enabled);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'10',message:time + " [onEnabledChange]"});
+    console.log(time,' [enabledchange] - ', enabled);
     RNToasty.Show({ title: '[enabledchange] - ' + enabled });
   }
   onNotificationAction(buttonId:string) {
-    console.log('[notificationaction] - ', buttonId);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'11',message:time + " [onNotificationAction]"});
+    console.log(time,' [notificationaction] - ', buttonId);
     switch(buttonId) {
       case 'notificationActionFoo':
         break;
@@ -309,16 +335,22 @@ class Map extends Component<IProps, IState> {
     }
   }
   onActivityChange(event:MotionActivityEvent) {
-    console.log('[activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'12',message:time + " [onActivityChange]"});
+    console.log(time,' [activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
     this.setState({
       motionActivity: event
     });
   }
   onProviderChange(event:ProviderChangeEvent) {
-    console.log('[providerchange] - ', event);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'13',message:time + " [onProviderChange]"});
+    console.log(time,' [providerchange] - ', event);
   }
   onMotionChange(event:MotionChangeEvent) {
-    console.log('[motionchange] - ', event.isMoving, event.location);
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'14',message:time + " [onMotionChange]"});
+    console.log(time,' [motionchange] - ', event.isMoving, event.location);
     let location = event.location;
 
     let state:any = {
@@ -362,24 +394,29 @@ class Map extends Component<IProps, IState> {
     });
 
     if (enabled) {
-      BackgroundGeolocation.start((state:State) => {
-        console.log("- Start success");
-        this.setState({
-            showsUserLocation: enabled,
-            followsUserLocation: enabled
-          });
+      BackgroundGeolocation.removeListeners(() => {
+    
+        BackgroundGeolocation.start((state:State) => {
+          console.log("- Start success");
+          this.setState({
+              showsUserLocation: enabled,
+              followsUserLocation: enabled
+            });
+        });
       });
     } else {
-      BackgroundGeolocation.stop();
-      // Clear markers, polyline, geofences, stationary-region
-      this.clearMarkers();
-      this.setState({
-        stationaryRadius: 0,
-        stationaryLocation: {
-          timestamp: '',
-          latitude: 0,
-          longitude: 0
-        }
+      BackgroundGeolocation.removeListeners(() => {
+        BackgroundGeolocation.stop();
+        // Clear markers, polyline, geofences, stationary-region
+        this.clearMarkers();
+        this.setState({
+          stationaryRadius: 0,
+          stationaryLocation: {
+            timestamp: '',
+            latitude: 0,
+            longitude: 0
+          }
+        });
       });
     }
   }
@@ -387,6 +424,7 @@ class Map extends Component<IProps, IState> {
   onClickGetCurrentPosition() {
     // When getCurrentPosition button is pressed, enable followsUserLocation
     // PanDrag will disable it.
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
     this.setState({
       followsUserLocation: true
     });
@@ -396,16 +434,19 @@ class Map extends Component<IProps, IState> {
       samples: 1,
       timeout: 30
     }).then((location:Location) => {
-      console.log('[getCurrentPosition] success: ', location);
+      this.notif.localNotif({id:'15',message:time + " [onClickGetCurrentPosition]"});
+      console.log(time, ' [getCurrentPosition] success: ', location);
       this.addMarker(location);
       this.setCenter(location);
     }).catch((error:LocationError) => {
-      console.warn('[getCurrentPosition] error: ', error);
+      console.warn(time, ' [getCurrentPosition] error: ', error);
     });
   }
 
   onClickChangePace() {
-    console.log('- onClickChangePace');
+    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    this.notif.localNotif({id:'16',message:time + " [onClickChangePace]"});
+    console.log(time, '- onClickChangePace');
     let isMoving = !this.state.isMoving;
     this.setState({isMoving: isMoving});
     BackgroundGeolocation.changePace(isMoving);
@@ -413,27 +454,6 @@ class Map extends Component<IProps, IState> {
 
   onPressGeofence() {
 
-  }
-  getMotionActivityIcon() {
-    let activity = (this.state.motionActivity != null) ? this.state.motionActivity.activity : undefined;
-    switch (activity) {
-      case 'unknown':
-        return 'ios-help-circle';
-      case 'still':
-        return 'ios-body';
-      case 'on_foot':
-        return 'ios-walk';
-      case 'walking':
-        return 'ios-walk';
-      case 'running':
-        return 'ios-walk';
-      case 'in_vehicle':
-        return 'ios-car';
-      case 'on_bicycle':
-        return 'ios-bicycle';
-      default:
-        return 'ios-help-cirlce';
-    }
   }
 
   renderMarkers() {

@@ -82,12 +82,14 @@ class MapSettings extends React.Component {
   saveSettings(){
     BackgroundGeolocation.ready(_BgGeoConfig, (state:State) => {
       console.log('- state: ', state);
-      BackgroundGeolocation.stop();
-      if (state.enabled) {
-        BackgroundGeolocation.start((state:State) => {
-          console.log("- Start success");
-        });
-      }
+      BackgroundGeolocation.removeListeners(() => {
+        BackgroundGeolocation.stop();
+        if (state.enabled) {
+          BackgroundGeolocation.start((state:State) => {
+            console.log("- Start success");
+          });
+        }
+      });
     }, (error:string) => {
       console.warn('BackgroundGeolocation error: ', error)
     });

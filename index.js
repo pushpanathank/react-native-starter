@@ -6,6 +6,8 @@ import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {name as appName} from './app.json';
 
+import moment from 'moment';
+import PushNotification from 'react-native-push-notification';
 import BackgroundGeolocation from "react-native-background-geolocation";
 import BackgroundFetch from "react-native-background-fetch";
 import { gestureHandlerRootHOC } from 'react-native-gesture-handler'
@@ -22,8 +24,9 @@ AppRegistry.registerComponent(appName, () => gestureHandlerRootHOC(App));
 * For more information, see:  https://github.com/transistorsoft/react-native-background-geolocation/wiki/Android-Headless-Mode
 */
 let BackgroundGeolocationHeadlessTask = async (event) => {
-  let params = event.params;
-  console.log('[BackgroundGeolocation HeadlessTask] -', event.name, params);
+  let params = event.params||{};
+  let time = moment().format('YYYY-MM-DD HH:mm:ss');
+  console.log(time+' [BackgroundGeolocation HeadlessTask] -', event.name, params);
 
   switch (event.name) {
     case 'heartbeat':
@@ -35,10 +38,27 @@ let BackgroundGeolocationHeadlessTask = async (event) => {
       });
       console.log('[BackgroundGeolocation HeadlessTask] - getCurrentPosition:', location);
       */
+      if (event.location && event.location.battery && event.location.battery.level < 0.5) {
+            PushNotification.localNotification({id:'17',message: time +'[BackgroundGeolocation HeadlessTask mine] - heartbeat battery_low_level_warning'});
+          }
+          PushNotification.localNotification({id:'18',message: time +'[BackgroundGeolocation HeadlessTask mine] - heartbeat'});
+      break;
+      case 'connectivitychange':
+        if (!params.connected) {
+          PushNotification.localNotification({id:'19',message: time +'[BackgroundGeolocation HeadlessTask mine] - connectivitychange'});
+        }
+      break;
+      case 'providerchange':
+        if (((params.provider && !params.provider.enabled)
+                || (!params.provider && !params.enabled))) {
+          PushNotification.localNotification({id:'20',message: time +'[BackgroundGeolocation HeadlessTask mine] - providerchange'});
+        }
+      break;
+      case 'powersavechange':
+          PushNotification.localNotification({id:'21',message: time +'[BackgroundGeolocation HeadlessTask mine] - powersavechange'});
       break;
   }
 }
-
 
 BackgroundGeolocation.registerHeadlessTask(BackgroundGeolocationHeadlessTask);
 
