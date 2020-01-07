@@ -1,3 +1,4 @@
 import AuthTypes from './Auth'
+import LocationTypes from './Location'
 
-export { AuthTypes }
+export { AuthTypes, LocationTypes }

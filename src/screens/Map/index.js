@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { View, StyleSheet, TextInput, Alert, AppState } from 'react-native';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import _ from 'lodash'; 
 
 import { RNToasty } from 'react-native-toasty';
 import MapView, {Marker, Polyline, Circle, PROVIDER_GOOGLE} from 'react-native-maps';
@@ -36,6 +37,7 @@ import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
 import appStyles from '../../styles/';
 import { NotifService } from '../../utils/';
+import { LocationActions } from "../../store/actions/";
 
 const LATITUDE_DELTA = 0.00922;
 const LONGITUDE_DELTA = 0.00421;
@@ -123,7 +125,8 @@ class Map extends Component<IProps, IState> {
       optMenu:null,
       currentDateObj: new Date(),
       currentDate: moment(new Date()).format("DD/MM/YYYY"),
-      showDatePick: false
+      showDatePick: false,
+      historyLoc:[]
     };
     this.notif = new NotifService();
     this.datePicker = null;
@@ -693,6 +696,26 @@ class Map extends Component<IProps, IState> {
 
   selectDate = (event, date) => {
     this.setState({showDatePick: false, currentDate: moment(date).format('DD/MM/YYYY'), currentDateObj: new Date(date)});
+    this.props.viewLocation({userid:1,date:moment(date).format('YYYY-MM-DD')}).then(res => {
+        if(res.status == 200){
+          let _locs = [];
+          res.data.map(function (loc) {
+            _locs.push({ latitude: Number(loc.lat), longitude: Number(loc.lon) });
+          });
+          this.setState({historyLoc:_locs});
+        }else{
+          // showToast(res.msg,"danger");
+        }
+      })
+      .catch(error => {
+        const messages = _.get(error, 'response.data.error')
+        message = (_.values(messages) || []).join(',')
+        if (message){
+         // showToast(message,"danger");
+       }
+       console.log(`
+          Error messages returned from server:`, messages )
+      });
   }
   showDate = ()=>{
     console.log("showDate");
@@ -753,6 +776,12 @@ class Map extends Component<IProps, IState> {
               strokeColor='rgba(0,179,253, 0.6)'
               strokeWidth={6}
               zIndex={0}
+            />
+            <Polyline
+              coordinates={this.state.historyLoc}
+              geodesic={true}
+              strokeColor={Theme.colors.color2} // fallback for when `strokeColors` is 
+              strokeWidth={4}
             />
             {this.renderMarkers()}
             {this.renderStopZoneMarkers()}
@@ -827,6 +856,12 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
   nav: state.nav,
-})
+});
 
-export default connect(mapStateToProps)(Map)
+const mapDispatchToProps = (dispatch) => {
+    return {
+      viewLocation: (values) => dispatch(LocationActions.ViewLocation(values)),
+   };
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(Map)

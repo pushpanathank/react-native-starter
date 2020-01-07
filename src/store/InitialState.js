@@ -6,5 +6,8 @@ export const InitialState = {
 	auth:{
 		user: null,
 		showIntro: true,
+	},
+	location:{
+		view: null
 	}
 };

@@ -18,7 +18,7 @@ const execute = async (path, method = 'GET', { params = {} , queries = {}, paylo
   // SEND LOGIN TOKEN if LOGIN
   const notification_token = await Storage.get('notification_token');
 
-  const base = apiConfig.apiBaseUrl.replace(/~\/$/, '');
+  const base = AppCons.baseURL.replace(/~\/$/, '');
   const url = compiler(params || {});
 
   if (token) {

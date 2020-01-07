@@ -6,7 +6,7 @@ const config = {
   distanceFilter:20,
   disableElasticity: false,
   elasticityMultiplier:5,
-  geofenceProximityRadius:1000,
+  geofenceProximityRadius:200,
   geofenceInitialTriggerEntry:false,
   stopAfterElapsedMinutes:0,
   desiredOdometerAccuracy:100,
