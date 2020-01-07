@@ -25,37 +25,47 @@ AppRegistry.registerComponent(appName, () => gestureHandlerRootHOC(App));
 */
 let BackgroundGeolocationHeadlessTask = async (event) => {
   let params = event.params||{};
-  let time = moment().format('YYYY-MM-DD HH:mm:ss');
-  console.log(time+' [BackgroundGeolocation HeadlessTask] -', event.name, params);
+  let time = moment().format('DD/MM HH:mm:ss');
+  console.log(time+' [HeadlessTask] -', event.name, params);
 
   switch (event.name) {
     case 'heartbeat':
       // Use await for async tasks
       /* DISABLED
-      let location = await BackgroundGeolocation.getCurrentPosition({
+      let location = await getCurrentPosition({
         samples: 1,
         persist: false
       });
-      console.log('[BackgroundGeolocation HeadlessTask] - getCurrentPosition:', location);
+      console.log('[HeadlessTask] - getCurrentPosition:', location);
       */
       if (event.location && event.location.battery && event.location.battery.level < 0.5) {
-            PushNotification.localNotification({id:'17',message: time +'[BackgroundGeolocation HeadlessTask mine] - heartbeat battery_low_level_warning'});
+            PushNotification.localNotification({id:'17',message: time +'[HeadlessTask mine] - heartbeat battery_low_level_warning'});
           }
-          PushNotification.localNotification({id:'18',message: time +'[BackgroundGeolocation HeadlessTask mine] - heartbeat'});
+          PushNotification.localNotification({id:'18',message: time +'[HeadlessTask mine] - heartbeat'});
+      break;
+      case 'activitychange':
+        PushNotification.localNotification({ message: time +" [HeadlessTask mine] - activitychange "+ params.activity});
+        if (params.activity !== "still"){
+            
+        }
+        BackgroundGeolocation.getCurrentPosition();
+      break;
+      case 'http':
+        PushNotification.localNotification({ message: time +" [HeadlessTask mine] - http "});
       break;
       case 'connectivitychange':
         if (!params.connected) {
-          PushNotification.localNotification({id:'19',message: time +'[BackgroundGeolocation HeadlessTask mine] - connectivitychange'});
+          PushNotification.localNotification({id:'19',message: time +'[HeadlessTask mine] - connectivitychange'});
         }
       break;
       case 'providerchange':
         if (((params.provider && !params.provider.enabled)
                 || (!params.provider && !params.enabled))) {
-          PushNotification.localNotification({id:'20',message: time +'[BackgroundGeolocation HeadlessTask mine] - providerchange'});
+          PushNotification.localNotification({id:'20',message: time +'[HeadlessTask mine] - providerchange'});
         }
       break;
       case 'powersavechange':
-          PushNotification.localNotification({id:'21',message: time +'[BackgroundGeolocation HeadlessTask mine] - powersavechange'});
+          PushNotification.localNotification({id:'21',message: time +'[HeadlessTask mine] - powersavechange'});
       break;
   }
 }

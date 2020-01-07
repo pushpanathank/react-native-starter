@@ -91,8 +91,12 @@ export default StyleSheet.create({
         height: 12,
         borderRadius: 6
     },
+    mapFooter:{
+        position:'absolute', 
+        bottom:50, 
+        width: '100%'
+    },
     mapBtns:{
-        position: 'absolute',
         width: 50,
         height: 50,
         justifyContent: 'center',

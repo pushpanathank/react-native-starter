@@ -1,4 +1,4 @@
 export default {
-	bgNotificationTitle : "Mahizh BgGeo Location",
+	bgNotificationTitle : "Mahizh Location Tracking",
 	bgNotificationText : "Tracking engaged",
 }

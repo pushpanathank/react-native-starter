@@ -28,6 +28,7 @@ import BackgroundGeolocation, {
 import BackgroundFetch from "react-native-background-fetch";
 
 import AsyncStorage from '@react-native-community/async-storage';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 import { Button, Block, Text, Header, MenuOptionMap } from '../../components/';
 import FontAwesome, { FaLightIcons } from '../../components/icons';
@@ -119,9 +120,13 @@ class Map extends Component<IProps, IState> {
       settings: {},
       // BackgroundGeolocation state
       bgGeo: {didLaunchInBackground: false, enabled: false, schedulerEnabled: false, trackingMode: 1, odometer: 0},
-      optMenu:null
+      optMenu:null,
+      currentDateObj: new Date(),
+      currentDate: moment(new Date()).format("DD/MM/YYYY"),
+      showDatePick: false
     };
     this.notif = new NotifService();
+    this.datePicker = null;
   }
 
   componentDidMount() {
@@ -133,7 +138,7 @@ class Map extends Component<IProps, IState> {
   }
 
   async configureBackgroundGeolocation() {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    let time = moment().format('DD/MM HH:mm:ss');
     // Step 1:  Listen to events:
     BackgroundGeolocation.onLocation(this.onLocation.bind(this), this.onLocationError.bind(this));
     BackgroundGeolocation.onMotionChange(this.onMotionChange.bind(this));
@@ -160,7 +165,7 @@ class Map extends Component<IProps, IState> {
       if (state.schedule && state.schedule.length > 0) {
         BackgroundGeolocation.startSchedule();
       }
-      // this.onClickGetCurrentPosition();
+      this.onClickGetCurrentPosition();
       this.setState({
         enabled: state.enabled,
         bgGeo: state
@@ -172,7 +177,7 @@ class Map extends Component<IProps, IState> {
 
   configureBackgroundFetch() {
     // [Optional] Configure BackgroundFetch.
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    let time = moment().format('DD/MM HH:mm:ss');
     BackgroundFetch.configure({
       minimumFetchInterval: 15, // <-- minutes (15 is minimum allowed)
       stopOnTerminate: false, // <-- Android-only,
@@ -198,8 +203,8 @@ class Map extends Component<IProps, IState> {
     BackgroundGeolocation.removeListeners();
   }
   onLocation(location:Location) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'1',message:time + " [onLocation]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'1',message:time + " [onLocation]"});
     console.log(time,' [location] -', location);
     if (!location.sample) {
       this.addMarker(location);
@@ -210,23 +215,23 @@ class Map extends Component<IProps, IState> {
     this.setCenter(location);
   }
   onLocationError(errorCode:LocationError) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'2',message:time + " [onLocationError]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'2',message:time + " [onLocationError]"});
     console.log(time,' [location] ERROR - ', errorCode);
   }
   onHeartbeat(params:HeartbeatEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'3',message:time + " [onHeartbeat]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'3',message:time + " [onHeartbeat]"});
     console.log(time, " [heartbeat] - ", params.location);
   }
   onHttp(response:HttpEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'4',message:time + " [onHttp]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'4',message:time + " [onHttp]"});
     console.log(time, ' [http] - ', JSON.stringify(response));
   }
   onSchedule(state:State) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'5',message:time + " [onSchedule]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'5',message:time + " [onSchedule]"});
     console.log(time," [schedule] - ", state.enabled, state);
     this.setState({
       enabled: state.enabled
@@ -242,8 +247,8 @@ class Map extends Component<IProps, IState> {
       return off.indexOf(geofence.identifier) < 0;
     });
 
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'6',message:time + " [onGeofencesChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'6',message:time + " [onGeofencesChange]"});
     console.log(time,' [geofenceschange] - ', event);
     // Add new "on" geofences.
     on.forEach((geofence:Geofence) => {
@@ -257,8 +262,8 @@ class Map extends Component<IProps, IState> {
     });
   }
   onGeofence(event:GeofenceEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'7',message:time + " [onGeofence]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'7',message:time + " [onGeofence]"});
     console.log(time,' [geofence] - ', event);
     let location:Location = event.location;
     let geofences = this.state.geofences || [];
@@ -307,25 +312,25 @@ class Map extends Component<IProps, IState> {
     });
   }
   onPowerSaveChange(isPowerSaveMode:boolean) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'8',message:time + " [onPowerSaveChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'8',message:time + " [onPowerSaveChange]"});
     console.log(time,' [powersavechange] - ', isPowerSaveMode);
   }
   onConnectivityChange(event:ConnectivityChangeEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'9',message:time + " [onConnectivityChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'9',message:time + " [onConnectivityChange]"});
     console.log(time,' [connectivitychange] - ', event);
     RNToasty.Show({ title: '[connectivitychange] - ' + event.connected });
   }
   onEnabledChange(enabled:boolean) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'10',message:time + " [onEnabledChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'10',message:time + " [onEnabledChange]"});
     console.log(time,' [enabledchange] - ', enabled);
     RNToasty.Show({ title: '[enabledchange] - ' + enabled });
   }
   onNotificationAction(buttonId:string) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'11',message:time + " [onNotificationAction]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'11',message:time + " [onNotificationAction]"});
     console.log(time,' [notificationaction] - ', buttonId);
     switch(buttonId) {
       case 'notificationActionFoo':
@@ -335,21 +340,21 @@ class Map extends Component<IProps, IState> {
     }
   }
   onActivityChange(event:MotionActivityEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'12',message:time + " [onActivityChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'12',message:time + " [onActivityChange]"});
     console.log(time,' [activitychange] -', event);  // eg: 'on_foot', 'still', 'in_vehicle'
     this.setState({
       motionActivity: event
     });
   }
   onProviderChange(event:ProviderChangeEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'13',message:time + " [onProviderChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'13',message:time + " [onProviderChange]"});
     console.log(time,' [providerchange] - ', event);
   }
   onMotionChange(event:MotionChangeEvent) {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'14',message:time + " [onMotionChange]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'14',message:time + " [onMotionChange]"});
     console.log(time,' [motionchange] - ', event.isMoving, event.location);
     let location = event.location;
 
@@ -424,7 +429,7 @@ class Map extends Component<IProps, IState> {
   onClickGetCurrentPosition() {
     // When getCurrentPosition button is pressed, enable followsUserLocation
     // PanDrag will disable it.
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
+    let time = moment().format('DD/MM HH:mm:ss');
     this.setState({
       followsUserLocation: true
     });
@@ -434,7 +439,7 @@ class Map extends Component<IProps, IState> {
       samples: 1,
       timeout: 30
     }).then((location:Location) => {
-      this.notif.localNotif({id:'15',message:time + " [onClickGetCurrentPosition]"});
+      // this.notif.localNotif({id:'15',message:time + " [onClickGetCurrentPosition]"});
       console.log(time, ' [getCurrentPosition] success: ', location);
       this.addMarker(location);
       this.setCenter(location);
@@ -444,8 +449,8 @@ class Map extends Component<IProps, IState> {
   }
 
   onClickChangePace() {
-    let time = moment().format('YYYY-MM-DD HH:mm:ss');
-    this.notif.localNotif({id:'16',message:time + " [onClickChangePace]"});
+    let time = moment().format('DD/MM HH:mm:ss');
+    // this.notif.localNotif({id:'16',message:time + " [onClickChangePace]"});
     console.log(time, '- onClickChangePace');
     let isMoving = !this.state.isMoving;
     this.setState({isMoving: isMoving});
@@ -683,9 +688,25 @@ class Map extends Component<IProps, IState> {
   }
 
   assignMenuref = (ref) =>{
-    this.setState({
-      optMenu: ref
-    });
+    this.setState({optMenu: ref});
+  }
+
+  selectDate = (event, date) => {
+    this.setState({showDatePick: false, currentDate: moment(date).format('DD/MM/YYYY'), currentDateObj: new Date(date)});
+  }
+  showDate = ()=>{
+    console.log("showDate");
+    this.setState({showDatePick: true});
+  }
+  goToPrevDay = ()=>{
+    console.log("goToPrevDay");
+    let date = moment(this.state.currentDate, "DD/MM/YYYY").subtract(1, 'days');
+    this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
+  }
+  goToNextDay = ()=>{
+    console.log("goToNextDay");
+    let date = moment(this.state.currentDate, "DD/MM/YYYY").add(1, 'days');
+    this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
   }
 
   render () {
@@ -739,26 +760,61 @@ class Map extends Component<IProps, IState> {
             {this.renderGeofencesHit()}
             {this.renderGeofencesHitEvents()}
           </MapView>
-           <Block row padding={[0,Theme.sizes.indent]}>
-              <Block>
-                <Button ripple
-                  color="secondary"
-                  onPress={this.onClickGetCurrentPosition.bind(this)}
-                  style={[appStyles.mapBtns, appStyles.mapBtnBottomLeft]}
-                >
-                  <FontAwesome icon={FaLightIcons.location}/>
-                </Button> 
+            <View style={appStyles.mapFooter}>
+             <Block row space="between" padding={[0,Theme.sizes.indent]}>
+                <Block flex={1}>
+                  <Button ripple
+                    color="secondary"
+                    onPress={this.onClickGetCurrentPosition.bind(this)}
+                    style={appStyles.mapBtns}
+                  >
+                    <FontAwesome icon={FaLightIcons.location}/>
+                  </Button> 
+                </Block>
+                <Block flex={4}>
+                  <Block row space="between">
+                    <Button ripple
+                      color="transparant"
+                      onPress={this.goToPrevDay}
+                      style={appStyles.mapBtns}
+                    >
+                      <FontAwesome icon={FaLightIcons.angleLeft} size={Theme.sizes.h4}/>
+                    </Button>
+                    <Button ripple
+                      color="transparant"
+                      onPress={this.showDate}
+                      style={{}}
+                    >
+                      <Text center h4 numberOfLines={1}>{this.state.currentDate}</Text>
+                    </Button> 
+                    <Button ripple
+                      color="transparant"
+                      onPress={this.goToNextDay}
+                      style={appStyles.mapBtns}
+                    >
+                      <FontAwesome icon={FaLightIcons.angleRight} size={Theme.sizes.h4}/>
+                    </Button> 
+                  </Block>
+                </Block>
+                <Block flex={1}>
+                  <Button ripple
+                    color="secondary"
+                    onPress={() => this.onToggleEnabled()}
+                    style={appStyles.mapBtns}
+                  >
+                    <FontAwesome icon={this.state.enabled ? FaLightIcons.pause : FaLightIcons.play }/>
+                  </Button>
+                </Block>
               </Block>
-              <Block>
-                <Button ripple
-                  color="secondary"
-                  onPress={() => this.onToggleEnabled()}
-                  style={[appStyles.mapBtns, appStyles.mapBtnBottomRight]}
-                >
-                  <FontAwesome icon={this.state.enabled ? FaLightIcons.pause : FaLightIcons.play }/>
-                </Button>
-              </Block>
-            </Block>
+              { this.state.showDatePick && <RNDateTimePicker value={this.state.currentDateObj}
+                    ref={ref => this.datePicker = ref}
+                    mode={'date'}
+                    maximumDate={new Date()}
+                    is24Hour={true}
+                    display="default"
+                    onChange={this.selectDate} />
+              }
+            </View>
          </View>
       </View>
     )
