@@ -14,6 +14,7 @@ import { store, persistor } from './store/';
 import ReduxNavigation from './navigation/ReduxNavigation';
 import { Theme } from './constants/';
 import { NotifService } from './utils/';
+import { FullLoader } from './components/';
 
 let codePushOptions = { 
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
@@ -73,7 +74,7 @@ codePushDownloadDidProgress(progress) {
     return (
       <Provider store={store}>
         <PersistGate 
-          loading={<Text>Loading</Text>}
+          loading={<FullLoader />}
           persistor={persistor}
         >
         <StatusBar backgroundColor={Theme.colors.primary} barStyle="light-content" />

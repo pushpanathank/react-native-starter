@@ -56,7 +56,6 @@ type IState = {
   isEmailingLog?: boolean;
   isDestroyingLocations?: boolean;
   isPressingOnMap?: boolean;
-  isResettingOdometer?: boolean;
   mapScrollEnabled?: boolean,
   showsUserLocation?: boolean,
   followsUserLocation?: boolean,
@@ -101,14 +100,15 @@ class Map extends Component<IProps, IState> {
       tracksViewChanges: true,
       // Map state
       centerCoordinate: {
-        latitude: 0,
-        longitude: 0
+        latitude: 25.0304058,
+        longitude: 73.7709524,
+        latitudeDelta: 90,
+        longitudeDelta: 0.00421,
       },
       isPressingOnMap: false,
       mapScrollEnabled: false,
       showsUserLocation: false,
       followsUserLocation: false,
-      isResettingOdometer: false,
       stationaryLocation: {timestamp: '',latitude:0,longitude:0},
       stationaryRadius: 0,
       markers: [],
@@ -168,7 +168,7 @@ class Map extends Component<IProps, IState> {
       if (state.schedule && state.schedule.length > 0) {
         BackgroundGeolocation.startSchedule();
       }
-      this.onClickGetCurrentPosition();
+      // this.onClickGetCurrentPosition();
       this.setState({
         enabled: state.enabled,
         bgGeo: state
@@ -696,26 +696,7 @@ class Map extends Component<IProps, IState> {
 
   selectDate = (event, date) => {
     this.setState({showDatePick: false, currentDate: moment(date).format('DD/MM/YYYY'), currentDateObj: new Date(date)});
-    this.props.viewLocation({userid:1,date:moment(date).format('YYYY-MM-DD')}).then(res => {
-        if(res.status == 200){
-          let _locs = [];
-          res.data.map(function (loc) {
-            _locs.push({ latitude: Number(loc.lat), longitude: Number(loc.lon) });
-          });
-          this.setState({historyLoc:_locs});
-        }else{
-          // showToast(res.msg,"danger");
-        }
-      })
-      .catch(error => {
-        const messages = _.get(error, 'response.data.error')
-        message = (_.values(messages) || []).join(',')
-        if (message){
-         // showToast(message,"danger");
-       }
-       console.log(`
-          Error messages returned from server:`, messages )
-      });
+    this._viewLocation(date);
   }
   showDate = ()=>{
     console.log("showDate");
@@ -725,11 +706,43 @@ class Map extends Component<IProps, IState> {
     console.log("goToPrevDay");
     let date = moment(this.state.currentDate, "DD/MM/YYYY").subtract(1, 'days');
     this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
+    this._viewLocation(date);
   }
   goToNextDay = ()=>{
     console.log("goToNextDay");
     let date = moment(this.state.currentDate, "DD/MM/YYYY").add(1, 'days');
     this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
+    this._viewLocation(date);
+  }
+
+  _viewLocation = (date) =>{
+    this.props.viewLocation({userid:1,date:moment(date).format('YYYY-MM-DD')}).then(res => {
+        if(res.status == 200){
+          let _locs = [], _stops=[], coordinate={};
+          res.data.map(function (loc) {
+            coordinate = { latitude: Number(loc.latitude), longitude: Number(loc.longitude) };
+            _locs.push(coordinate);
+            if(loc.stationary.hasOwnProperty('lat')){
+              _stops.push({key:loc.recorded_at_ts, coordinate:coordinate});
+            }
+          });
+          this.setState({historyLoc:_locs, stopZones:_stops});
+          // this.state.stopZones key coordinate
+          // console.log("_locs", _locs);
+          this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 40, right: 40, bottom: 100, left: 40 },animated: true});
+        }else{
+          RNToasty.Error({title: res.msg});
+        }
+      })
+      .catch(error => {
+        const messages = _.get(error, 'response.data.error')
+        message = (_.values(messages) || []).join(',')
+        if (message){
+          RNToasty.Error({title: message});
+        }
+       console.log(`
+          Error messages returned from server:`, messages )
+      });
   }
 
   render () {
@@ -750,6 +763,7 @@ class Map extends Component<IProps, IState> {
             provider={PROVIDER_GOOGLE}
             style={appStyles.mapView}
             customMapStyle={MapStyle}
+            initialRegion={this.state.centerCoordinate}
             showsUserLocation={this.state.showsUserLocation}
             followsUserLocation={false}
             onLongPress={this.onLongPress.bind(this)}
@@ -759,6 +773,7 @@ class Map extends Component<IProps, IState> {
             showsPointsOfInterest={false}
             showsScale={false}
             showsTraffic={false}
+            fitToElements={true}
             toolbarEnabled={false}>
             <Circle
               key={this.state.stationaryLocation.timestamp}
@@ -780,8 +795,8 @@ class Map extends Component<IProps, IState> {
             <Polyline
               coordinates={this.state.historyLoc}
               geodesic={true}
-              strokeColor={Theme.colors.color2} // fallback for when `strokeColors` is 
-              strokeWidth={4}
+              strokeColor={Theme.colors.black}
+              strokeWidth={5}
             />
             {this.renderMarkers()}
             {this.renderStopZoneMarkers()}

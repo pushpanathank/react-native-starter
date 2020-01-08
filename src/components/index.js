@@ -5,6 +5,7 @@ import Ripple from "./Ripple";
 import Switch from "./Switch";
 import Text from "./Text";
 import Input from "./Input";
+import FullLoader from "./FullLoader";
 
 import DrawerNavigator from "./DrawerNavigator";
 import Header from "./Header";
@@ -19,6 +20,7 @@ export {
 	Switch,
 	Text,
 	Input,
+	FullLoader,
 	
 	DrawerNavigator,
 	Header,

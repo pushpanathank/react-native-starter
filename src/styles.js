@@ -54,6 +54,10 @@ export default StyleSheet.create({
         width: Scaling.moderateScale(130)
     },
 
+    loadingLogo:{
+        width: Scaling.moderateScale(100)
+    },
+
     mapContainer: {
         // ...StyleSheet.absoluteFillObject,
         height: Device.winHeight-(Theme.sizes.headerHeight-30),

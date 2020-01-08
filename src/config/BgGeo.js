@@ -3,12 +3,12 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 
 const config = {
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-  distanceFilter:20,
+  distanceFilter:10,
   disableElasticity: false,
   elasticityMultiplier:5,
   geofenceProximityRadius:200,
   geofenceInitialTriggerEntry:false,
-  stopAfterElapsedMinutes:0,
+  stopAfterElapsedMinutes:1,
   desiredOdometerAccuracy:100,
   useSignificantChangesOnly:false,
   stopTimeout:1,
