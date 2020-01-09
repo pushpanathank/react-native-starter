@@ -83,7 +83,6 @@ class MapSettings extends React.Component {
   saveSettings(){
     BackgroundGeolocation.ready(_BgGeoConfig, (state:State) => {
       console.log('- state: ', state);
-      BackgroundGeolocation.removeListeners(() => {
         BackgroundGeolocation.stop();
         if (state.enabled) {
           BackgroundGeolocation.start((state:State) => {
@@ -91,7 +90,6 @@ class MapSettings extends React.Component {
             console.log("- Start success");
           });
         }
-      });
     }, (error:string) => {
       RNToasty.Show({ title: 'BackgroundGeolocation error: ', error });
       console.warn('BackgroundGeolocation error: ', error)

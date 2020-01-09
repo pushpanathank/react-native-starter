@@ -39,9 +39,9 @@ let BackgroundGeolocationHeadlessTask = async (event) => {
       console.log('[HeadlessTask] - getCurrentPosition:', location);
       */
       if (event.location && event.location.battery && event.location.battery.level < 0.5) {
-            PushNotification.localNotification({id:'17',message: time +'[HT] - heartbeat battery_low_level_warning'});
+            PushNotification.localNotification({id:'17', playSound:false ,message: time +'[HT] - heartbeat battery_low_level_warning'});
           }
-          PushNotification.localNotification({id:'18',message: time +'[HT] - heartbeat'});
+          PushNotification.localNotification({id:'18', playSound:false ,message: time +'[HT] - heartbeat'});
       break;
       case 'activitychange':
         PushNotification.localNotification({ message: time +" [HT] - activity "+ params.activity});
@@ -55,17 +55,17 @@ let BackgroundGeolocationHeadlessTask = async (event) => {
       break;
       case 'connectivitychange':
         if (!params.connected) {
-          PushNotification.localNotification({id:'19',message: time +'[HT] - connectivitychange'});
+          PushNotification.localNotification({id:'19', playSound:false ,message: time +'[HT] - connectivitychange'});
         }
       break;
       case 'providerchange':
         if (((params.provider && !params.provider.enabled)
                 || (!params.provider && !params.enabled))) {
-          PushNotification.localNotification({id:'20',message: time +'[HT] - providerchange'});
+          PushNotification.localNotification({id:'20', playSound:false ,message: time +'[HT] - providerchange'});
         }
       break;
       case 'powersavechange':
-          PushNotification.localNotification({id:'21',message: time +'[HT] - powersavechange'});
+          PushNotification.localNotification({id:'21', playSound:false ,message: time +'[HT] - powersavechange'});
       break;
   }
 }

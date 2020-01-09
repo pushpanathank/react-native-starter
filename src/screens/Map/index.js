@@ -403,8 +403,6 @@ class Map extends Component<IProps, IState> {
     });
 
     if (enabled) {
-      BackgroundGeolocation.removeListeners(() => {
-    
         BackgroundGeolocation.start((state:State) => {
           RNToasty.Show({ title: "- Start success" });
           //console.log("- Start success");
@@ -413,9 +411,7 @@ class Map extends Component<IProps, IState> {
               followsUserLocation: enabled
             });
         });
-      });
     } else {
-      BackgroundGeolocation.removeListeners(() => {
         BackgroundGeolocation.stop();
         RNToasty.Error({ title: "- Stop success" });
         // Clear markers, polyline, geofences, stationary-region
@@ -428,7 +424,6 @@ class Map extends Component<IProps, IState> {
             longitude: 0
           }
         });
-      });
     }
   }
 
