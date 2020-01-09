@@ -5,7 +5,9 @@ import Ripple from "./Ripple";
 import Switch from "./Switch";
 import Text from "./Text";
 import Input from "./Input";
-import FullLoader from "./FullLoader";
+import FullLoader from "./loaders/Full";
+import CircleLoader from "./loaders/Circle";
+import OverlayLoader from "./loaders/Overlay";
 
 import DrawerNavigator from "./DrawerNavigator";
 import Header from "./Header";
@@ -21,6 +23,8 @@ export {
 	Text,
 	Input,
 	FullLoader,
+	CircleLoader,
+	OverlayLoader,
 	
 	DrawerNavigator,
 	Header,

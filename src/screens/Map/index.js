@@ -731,7 +731,7 @@ class Map extends Component<IProps, IState> {
           this.setState({historyLoc:_locs, stopZones:_stops, historyLocMarkers:_markers});
           // this.state.stopZones key coordinate
           // console.log("_locs", _locs);
-          this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 40, right: 40, bottom: 100, left: 40 },animated: true});
+          this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 40, right: 40, bottom: 150, left: 40 },animated: true});
         }else{
           RNToasty.Error({title: res.msg});
         }
@@ -806,7 +806,7 @@ class Map extends Component<IProps, IState> {
                   return (<Marker
                     key={marker.key}
                     coordinate={marker.coordinate}
-                    anchor={{x:0, y:0}}
+                    anchor={{x:0.5, y:0.5}}
                     title={marker.title}>
                     <View style={[appStyles.markerHistoryIcon]}></View>
                   </Marker>)
