@@ -3,9 +3,9 @@ import BackgroundGeolocation from "react-native-background-geolocation";
 
 const config = {
   desiredAccuracy: BackgroundGeolocation.DESIRED_ACCURACY_HIGH,
-  distanceFilter:10,
+  distanceFilter:25,
   disableElasticity: false,
-  elasticityMultiplier:5,
+  elasticityMultiplier:4,
   geofenceProximityRadius:200,
   geofenceInitialTriggerEntry:false,
   stopAfterElapsedMinutes:1,
@@ -30,8 +30,8 @@ const config = {
   debug:true,
   logLevel:BackgroundGeolocation.LOG_LEVEL_VERBOSE,
   logMaxDays:3,
-  locationUpdateInterval:1000,
-  fastestLocationUpdateInterval:0,
+  locationUpdateInterval:3000,
+  fastestLocationUpdateInterval:2000,
   deferTime:0,
   geofenceModeHighAccuracy:true,
   triggerActivities:'in_vehicle, on_bicycle, on_foot, running, walking',

@@ -95,6 +95,14 @@ export default StyleSheet.create({
         height: 12,
         borderRadius: 6
     },
+    markerHistoryIcon: {
+        borderWidth:.5,
+        borderColor:Theme.colors.black,
+        backgroundColor: Theme.colors.color1,
+        width: 6,
+        height: 6,
+        borderRadius: 3
+    },
     mapFooter:{
         position:'absolute', 
         bottom:50, 

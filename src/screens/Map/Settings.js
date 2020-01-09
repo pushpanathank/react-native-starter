@@ -3,6 +3,7 @@ import { View, StyleSheet, TextInput, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 
 import AsyncStorage from '@react-native-community/async-storage';
+import { RNToasty } from 'react-native-toasty';
 
 import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { Button, Block, Text, Input, Header, MenuOptionMap } from '../../components/';
@@ -86,11 +87,13 @@ class MapSettings extends React.Component {
         BackgroundGeolocation.stop();
         if (state.enabled) {
           BackgroundGeolocation.start((state:State) => {
+            RNToasty.Show({ title: "- Start success" });
             console.log("- Start success");
           });
         }
       });
     }, (error:string) => {
+      RNToasty.Show({ title: 'BackgroundGeolocation error: ', error });
       console.warn('BackgroundGeolocation error: ', error)
     });
   }

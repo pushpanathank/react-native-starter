@@ -126,7 +126,8 @@ class Map extends Component<IProps, IState> {
       currentDateObj: new Date(),
       currentDate: moment(new Date()).format("DD/MM/YYYY"),
       showDatePick: false,
-      historyLoc:[]
+      historyLoc:[],
+      historyLocMarkers:[]
     };
     this.notif = new NotifService();
     this.datePicker = null;
@@ -405,7 +406,8 @@ class Map extends Component<IProps, IState> {
       BackgroundGeolocation.removeListeners(() => {
     
         BackgroundGeolocation.start((state:State) => {
-          console.log("- Start success");
+          RNToasty.Show({ title: "- Start success" });
+          //console.log("- Start success");
           this.setState({
               showsUserLocation: enabled,
               followsUserLocation: enabled
@@ -415,6 +417,7 @@ class Map extends Component<IProps, IState> {
     } else {
       BackgroundGeolocation.removeListeners(() => {
         BackgroundGeolocation.stop();
+        RNToasty.Error({ title: "- Stop success" });
         // Clear markers, polyline, geofences, stationary-region
         this.clearMarkers();
         this.setState({
@@ -487,7 +490,8 @@ class Map extends Component<IProps, IState> {
         key={stopZone.key}
         tracksViewChanges={this.state.tracksViewChanges}
         coordinate={stopZone.coordinate}
-        anchor={{x:0, y:0}}>
+        title={stopZone.title}
+        anchor={{x:0.5, y:0.5}}>
         <View style={[appStyles.stopZoneMarker]}></View>
       </Marker>
     ));
@@ -718,15 +722,18 @@ class Map extends Component<IProps, IState> {
   _viewLocation = (date) =>{
     this.props.viewLocation({userid:1,date:moment(date).format('YYYY-MM-DD')}).then(res => {
         if(res.status == 200){
-          let _locs = [], _stops=[], coordinate={};
-          res.data.map(function (loc) {
+          let _locs = [], _stops=[], _markers=[], coordinate={};
+          res.data.map(function (loc,idx) {
             coordinate = { latitude: Number(loc.latitude), longitude: Number(loc.longitude) };
             _locs.push(coordinate);
+            _markers.push({key:loc.recorded_at_ts+''+idx, coordinate:coordinate, title:loc.recorded_at });
             if(loc.stationary.hasOwnProperty('lat')){
-              _stops.push({key:loc.recorded_at_ts, coordinate:coordinate});
+              _stops.push({key:loc.recorded_at_ts, coordinate:coordinate, title: loc.stationary.address.formatted_address});
             }
           });
-          this.setState({historyLoc:_locs, stopZones:_stops});
+          // _markers.shift();
+          // _markers.pop();
+          this.setState({historyLoc:_locs, stopZones:_stops, historyLocMarkers:_markers});
           // this.state.stopZones key coordinate
           // console.log("_locs", _locs);
           this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 40, right: 40, bottom: 100, left: 40 },animated: true});
@@ -797,7 +804,19 @@ class Map extends Component<IProps, IState> {
               geodesic={true}
               strokeColor={Theme.colors.black}
               strokeWidth={5}
+              lineJoin="miter"
             />
+            {
+              this.state.historyLocMarkers.map((marker:any) => {
+                  return (<Marker
+                    key={marker.key}
+                    coordinate={marker.coordinate}
+                    anchor={{x:0, y:0}}
+                    title={marker.title}>
+                    <View style={[appStyles.markerHistoryIcon]}></View>
+                  </Marker>)
+                })
+            }
             {this.renderMarkers()}
             {this.renderStopZoneMarkers()}
             {this.renderActiveGeofences()}
