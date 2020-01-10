@@ -68,7 +68,7 @@ class MenuOptionMap extends Component {
           button={<FontAwesome
                 icon={FaLightIcons.ellipsisV}
                 type={'light'}
-                size={Theme.sizes.h3*1.8}
+                size={Theme.sizes.h3}
                 color={Theme.colors.white}
               />}
         >

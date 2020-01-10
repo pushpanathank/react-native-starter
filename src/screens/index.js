@@ -7,7 +7,6 @@ import Home from "./Home";
 import Map from "./Map";
 import MapSettings from "./Map/Settings";
 import MapGeofence from "./Map/Geofence";
-import MapHistory from "./Map/History";
 
 
 export { 
@@ -18,6 +17,5 @@ export {
 	Home, 
 	Map, 
 	MapSettings, 
-	MapGeofence, 
-	MapHistory 
+	MapGeofence 
 };

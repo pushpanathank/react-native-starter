@@ -53,7 +53,7 @@ class OverlayLoader extends React.Component {
                 onRequestClose={() => {console.log('close modal')}}>
                 <View style={[styles.modalBackground]}>
                     <View style={[styles.activityIndicatorWrapper]}>
-                        <CircleLoader color={Theme.colors.color2}/>
+                        <CircleLoader />
                     </View>
                 </View>
             </Modal>
@@ -70,12 +70,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'column',
         justifyContent: 'space-around',
-        backgroundColor: '#00000080',
-        marginTop:Theme.sizes.headerHeight
+        backgroundColor: '#00000040'
     },
     activityIndicatorWrapper: {
         backgroundColor: 'transparent',
-        height: height-Theme.sizes.headerHeight,
+        height: height,
         width: width,
         borderRadius: 10,
         display: 'flex',

@@ -103,12 +103,6 @@ export default StyleSheet.create({
         height: 6,
         borderRadius: 3
     },
-    mapHeader:{
-        position:'absolute', 
-        top:10, 
-        width: '100%',
-        zIndex:9
-    },
     mapFooter:{
         position:'absolute', 
         bottom:50, 

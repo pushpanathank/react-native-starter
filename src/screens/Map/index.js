@@ -31,7 +31,7 @@ import BackgroundFetch from "react-native-background-fetch";
 import AsyncStorage from '@react-native-community/async-storage';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-import { Button, Block, Text, Header, MenuOptionMap, OverlayLoader } from '../../components/';
+import { Button, Block, Text, Header, MenuOptionMap } from '../../components/';
 import FontAwesome, { FaLightIcons } from '../../components/icons';
 import { MapStyle, BgGeoConfig } from '../../config/';
 import { Theme } from '../../constants/';
@@ -127,8 +127,7 @@ class Map extends Component<IProps, IState> {
       currentDate: moment(new Date()).format("DD/MM/YYYY"),
       showDatePick: false,
       historyLoc:[],
-      historyLocMarkers:[],
-      goToHistory:false
+      historyLocMarkers:[]
     };
     this.notif = new NotifService();
     this.datePicker = null;
@@ -703,13 +702,13 @@ class Map extends Component<IProps, IState> {
     this.setState({showDatePick: true});
   }
   goToPrevDay = ()=>{
+    console.log("goToPrevDay");
     let date = moment(this.state.currentDate, "DD/MM/YYYY").subtract(1, 'days');
     this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
     this._viewLocation(date);
   }
   goToNextDay = ()=>{
-    let isSameDay = moment(this.state.currentDate, "DD/MM/YYYY").isSame(new Date(), "day");
-    if(isSameDay) return;
+    console.log("goToNextDay");
     let date = moment(this.state.currentDate, "DD/MM/YYYY").add(1, 'days');
     this.setState({currentDate: date.format('DD/MM/YYYY'), currentDateObj: new Date(new Date(Date.parse(date.format('MM/DD/YYYY'))))});
     this._viewLocation(date);
@@ -732,14 +731,12 @@ class Map extends Component<IProps, IState> {
           this.setState({historyLoc:_locs, stopZones:_stops, historyLocMarkers:_markers});
           // this.state.stopZones key coordinate
           // console.log("_locs", _locs);
-          this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 80, right: 40, bottom: 250, left: 40 },animated: true});
+          this.refs.map.fitToCoordinates(_locs, {edgePadding: { top: 40, right: 40, bottom: 150, left: 40 },animated: true});
         }else{
           RNToasty.Error({title: res.msg});
         }
-        this.setState({goToHistory:false});
       })
       .catch(error => {
-        this.setState({goToHistory:false});
         const messages = _.get(error, 'response.data.error')
         message = (_.values(messages) || []).join(',')
         if (message){
@@ -750,24 +747,12 @@ class Map extends Component<IProps, IState> {
       });
   }
 
-  goToHistory = ()=>{
-    if(this.state.historyLoc.length>0){
-      this.props.navigation.navigate('MapHistory', {
-        historyLoc: this.state.historyLoc
-      })
-    }else{
-      this.setState({goToHistory:true});
-      this._viewLocation(this.state.currentDate);
-    }    
-  }
-
   render () {
 
     const { navigation } = this.props
 
     return (
       <View style={appStyles.row}>
-        <OverlayLoader visible={this.props.isLoading} />
         <Header
           text="Map"
           leftIconOnPress={()=>navigation.openDrawer()}
@@ -775,19 +760,6 @@ class Map extends Component<IProps, IState> {
           rightIconOnPress={()=>this.state.optMenu.show()}
         />
         <View style={appStyles.mapContainer}>
-          <View style={appStyles.mapHeader}>
-             <Block row space="between" padding={[0,Theme.sizes.indent]}>
-                <Block flex={1}>
-                  <Button ripple
-                    color="secondary"
-                    onPress={this.goToHistory}
-                    style={appStyles.mapBtns}
-                  >
-                    <FontAwesome icon={FaLightIcons.ballot}/>
-                  </Button> 
-                </Block>
-              </Block>
-          </View>
           <MapView
             ref="map"
             provider={PROVIDER_GOOGLE}
@@ -911,13 +883,9 @@ const styles = StyleSheet.create({
 
 });
 
-const mapStateToProps = (state) => {
-  console.log("state", state);
-  return {
-    nav: state.nav,
-    isLoading: state.Common.isLoading
-  };
-};
+const mapStateToProps = state => ({
+  nav: state.nav,
+});
 
 const mapDispatchToProps = (dispatch) => {
     return {
