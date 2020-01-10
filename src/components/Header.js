@@ -126,12 +126,12 @@ Header.propTypes = {
 };
 
 Header.defaultProps = {
-  left: Theme.sizes.indent,
-  right: Theme.sizes.indent,
+  left: Theme.sizes.indent*1.5,
+  right: Theme.sizes.indent*1.5,
   height: Theme.sizes.headerHeight,
   width: "100%",
-  leftIconSize: Theme.sizes.h4,
-  rightIconSize: Theme.sizes.h2,
+  leftIconSize: Theme.sizes.h2,
+  rightIconSize: Theme.sizes.h3*1.8,
   text: "Mahizh",
   rightIconName: FaLightIcons.ellipsisV,
   rightIconType: "light",

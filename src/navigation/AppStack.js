@@ -2,7 +2,7 @@ import { createStackNavigator, StackViewTransitionConfigs } from 'react-navigati
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 
-import { Home, Map, MapSettings, MapGeofence} from '../screens/';
+import { Home, Map, MapSettings, MapGeofence, MapHistory} from '../screens/';
 import { DrawerNavigator } from '../components/';
 import { Device } from '../utils/';
 
@@ -37,6 +37,13 @@ const MapStack = createStackNavigator({
         drawerLabel: "MapGeofence"
       },
       screen: MapGeofence
+    },
+
+    MapHistory: {
+      navigationOptions: {
+        drawerLabel: "MapHistory"
+      },
+      screen: MapHistory
     }
 }, {
   initialRouteName: "Map",

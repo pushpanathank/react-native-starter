@@ -48,7 +48,7 @@ const sizes = {
   base: baseSize,
   radius: 0,
   padding: Scaling.moderateScale(baseSize,7.5),
-  headerHeight: baseSize*3.5,
+  headerHeight: baseSize*3.8,
 
   // font sizes
   h1: Scaling.moderateScale(baseSize,16.5),
