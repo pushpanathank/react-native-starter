@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import _ from 'lodash'; 
 import { connect } from 'react-redux';
 import { StackActions, NavigationActions } from 'react-navigation';
 import {GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
-
+import { RNToasty } from 'react-native-toasty';
 
 import AllImages from "../../assets/images/";
 import { AuthActions } from "../../store/actions/";
@@ -24,7 +25,7 @@ class Login extends React.Component {
   }
 
   componentDidMount(){
-    if(this.props.user!=null){
+    if(this.props.user!=null && this.props.user.user_id>0){
       this.props.navigation.navigate('Home');
     }
   }
@@ -36,8 +37,20 @@ class Login extends React.Component {
       await GoogleSignin.hasPlayServices();
       await GoogleSignin.signIn().then((userInfo)=>{
         if(userInfo){
-          this.props.login(userInfo);
-          navigation.navigate('Home');
+          this.props.loginWithGoogle(userInfo.user).then(res => {
+            if(this.props.user.user_id>0){
+              navigation.navigate('Home');
+            }
+          })
+          .catch(error => {
+            const messages = _.get(error, 'response.data.error')
+            message = (_.values(messages) || []).join(',')
+            if (message){
+              RNToasty.Error({title: message});
+            }
+           console.log(`
+              Error messages returned from server:`, messages )
+          });
         }
       });
       /*const userInfo = await GoogleSignin.signIn();
@@ -77,11 +90,11 @@ class Login extends React.Component {
           <Block column={1}>
             <Block center middle>
               <GoogleSigninButton
-              style={{ width: 192, height: 48 }}
-              size={GoogleSigninButton.Size.Wide}
-              color={GoogleSigninButton.Color.Dark}
-              onPress={this.googleSignIn}
-              disabled={this.state.isSigninInProgress} />
+                style={{ width: 192, height: 48, backgroundColor: Theme.colors.primary, borderRadius:0 }}
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Light}
+                onPress={this.googleSignIn}
+                disabled={this.state.isSigninInProgress} />
 
             </Block>
           </Block>
@@ -112,7 +125,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-      login: (values) => dispatch(AuthActions.Login(values)),
+      loginWithGoogle: (values) => dispatch(AuthActions.LoginWithGoogle(values)),
    };
 };
 

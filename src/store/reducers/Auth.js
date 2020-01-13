@@ -19,7 +19,9 @@ const Auth = (state = InitialState.auth, action) => {
     case AuthTypes.LOGIN: {
       return {
         ...state,
-        user: action.user
+        user: action.data.user,
+        gpmem: action.data.gpmem,
+        gf: action.data.gf,
       }
     }
     case AuthTypes.REGISTER: {

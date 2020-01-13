@@ -58,6 +58,28 @@ export default StyleSheet.create({
         width: Scaling.moderateScale(100)
     },
 
+    logoutBtn:{
+        width: '100%',
+        position: 'absolute',
+        bottom: 0,
+        backgroundColor: Theme.colors.primary,
+        marginBottom: 0,
+        height: 50
+    },
+
+    drawerHeader:{
+        height: Theme.sizes.indent5x * 2,
+        backgroundColor: Theme.colors.primary,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: Theme.sizes.indent
+    },
+    profilePic:{
+        width: Theme.sizes.indent4x,
+        height: Theme.sizes.indent4x,
+        borderRadius:Theme.sizes.indent4x
+    },
+
     mapContainer: {
         // ...StyleSheet.absoluteFillObject,
         height: Device.winHeight-(Theme.sizes.headerHeight-30),

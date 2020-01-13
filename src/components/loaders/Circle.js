@@ -83,17 +83,17 @@ class CircleLoader extends React.Component<Props> {
 
 const styles = StyleSheet.create({
 	group: {
-		width: 75,
-		height: 30,
+		width: 60,
+		height: 25,
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'row',
 	},
 	circle: {
-		height: 15,
-		width: 15,
-		margin: 5,
-		borderRadius: 15,
+		height: 12,
+		width: 12,
+		margin: 4,
+		borderRadius: 12,
 		borderWidth: 0,
 	},
 });

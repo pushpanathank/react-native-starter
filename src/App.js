@@ -17,7 +17,8 @@ import { NotifService } from './utils/';
 import { FullLoader } from './components/';
 
 let codePushOptions = { 
-  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  // checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  checkFrequency: codePush.CheckFrequency.MANUAL,
   updateDialog: true, 
   // installMode: codePush.installMode.IMMEDIATE
 };
@@ -45,19 +46,19 @@ class Root extends React.Component {
     switch(status) {
         case codePush.SyncStatus.CHECKING_FOR_UPDATE:
           // RNToasty.Show({ title: "Checking for updates." });
-            console.log("Checking for updates.");
+            // console.log("Checking for updates.");
             break;
         case codePush.SyncStatus.DOWNLOADING_PACKAGE:
           RNToasty.Show({ title: "Downloading package." });
             console.log("Downloading package.");
             break;
         case codePush.SyncStatus.INSTALLING_UPDATE:
-          RNToasty.Show({ title: "Installing update." });
-            console.log("Installing update.");
+          // RNToasty.Show({ title: "Installing update." });
+            // console.log("Installing update.");
             break;
         case codePush.SyncStatus.UP_TO_DATE:
           // RNToasty.Show({ title: "Up-to-date." });
-            console.log("Up-to-date.");
+            // console.log("Up-to-date.");
             break;
         case codePush.SyncStatus.UPDATE_INSTALLED:
           RNToasty.Show({ title: "Update installed." });

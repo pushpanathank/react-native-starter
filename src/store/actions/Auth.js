@@ -1,7 +1,23 @@
-import { AuthTypes } from '../types';
+import { AuthTypes, CommonTypes } from '../types';
+import { AppCons } from '../../constants';
+import Api from '../../utils/Api';
 
-export const Login = payloads => dispatch => {
-	return dispatch({ type: AuthTypes.LOGIN, user: payloads.user });
+export const LoginWithGoogle = payloads => dispatch => {
+	console.log("payloads", payloads);
+	dispatch({ type: CommonTypes.LOADING, isLoading: true });
+	return Api.post(AppCons.loginWithGoogle,  {payloads: payloads})
+		.then(res => {
+	    // console.log("res", res.data);
+	    dispatch({ type: CommonTypes.LOADING, isLoading: false });
+	      if(res.status == 200){
+	        if(res.data.status==200){
+	          dispatch({ type: AuthTypes.LOGIN, data: res.data.data });
+	        }
+		    return res.data;
+	      } else {
+	        return res
+	      }
+    });
 
 }
 

@@ -5,6 +5,8 @@ export const InitialState = {
 	},
 	auth:{
 		user: null,
+		gpmem: [],
+		gf: [],
 		showIntro: true,
 	},
 	location:{

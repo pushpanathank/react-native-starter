@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { connect } from 'react-redux';
 import { DrawerItems } from "react-navigation-drawer";
 import {GoogleSignin, GoogleSigninButton, statusCodes} from 'react-native-google-signin';
@@ -8,6 +8,7 @@ import { AuthActions } from "../store/actions/";
 import appStyles from '../styles';
 import { Theme } from '../constants';
 import Button from './Button';
+import Block from './Block';
 import Text from './Text';
 
 class DrawerNavigator extends React.Component {
@@ -32,6 +33,13 @@ class DrawerNavigator extends React.Component {
 
     return (
       <View style={[appStyles.row]}>
+        <View style={appStyles.drawerHeader}>
+          <Image style={appStyles.profilePic} source={{uri:this.props.user.photo}} />
+          <Block padding={10}>
+            <Text center>~~Welcome~~</Text>
+            <Text h4 white>{this.props.user.name}</Text>
+          </Block>
+        </View>
         <DrawerItems
           activeBackgroundColor={Theme.colors.secondary}
           activeTintColor={Theme.colors.black}
@@ -39,7 +47,7 @@ class DrawerNavigator extends React.Component {
           {...this.props}
         />
 
-        <Button style={styles.logoutBtn} onPress={()=> this.signOut()}><Text center header>Logout</Text></Button>
+        <Button style={appStyles.logoutBtn} onPress={()=> this.signOut()}><Text center header>Logout</Text></Button>
       </View>
     )
   }
@@ -49,14 +57,7 @@ const styles = StyleSheet.create({
   icons: {
     width: 30
   },
-  logoutBtn:{
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    backgroundColor: Theme.colors.primary,
-    marginBottom: 0,
-    height: 50
-  }
+  
 });
 
 const mapStateToProps = (state) => {
